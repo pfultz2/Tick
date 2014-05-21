@@ -163,13 +163,8 @@ struct tick_private_trait_ ## name \
             (__VA_ARGS__)) \
         )
 
-// template<class Trait>
-// struct test_trait;
-// template<class Trait, class... Ts>
-// struct test_trait<Trait(Ts...)>
-// {
-//     typedef decltype(Trait::requires(std::declval<Ts>()...)) type;
-// };
+// Add support for zlang
+#define ZLANG_tick_trait (TICK_TRAIT)
 
 }
 
