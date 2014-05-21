@@ -37,17 +37,6 @@ struct trait_check_push_back<T, TRAIT_CHECK_FAILURE<Ts...>>
     typedef TRAIT_CHECK_FAILURE<T, Ts...> type;
 };
 
-// struct trait_check_fold_each
-// {
-//     template<class TraitCheck, class T>
-//     struct apply
-//     : boost::mpl::eval_if<T,
-//         boost::mpl::identity<TraitCheck>, 
-//         trait_check_push_back<T, TraitCheck>
-//     >
-//     {};
-// };
-
 template<class T>
 struct box
 {
@@ -69,12 +58,6 @@ struct trait_check_fold
     trait_check_fold_each
 >
 {};
-
-// template<class Set>
-// struct trait_check_impl
-// {
-//     typedef trait_check_test<sizeof(typename trait_check_fold<Set>::type)> type;
-// };
 
 template<class Set, class T>
 struct trait_check_insert_trait
@@ -105,11 +88,6 @@ struct trait_check_impl
 {};
 
 }
-
-// template<class... Ts>
-// struct trait_check
-// : detail::trait_check_impl<typename detail::trait_check_insert_traits<set<>, Ts...>::type>
-// {};
 
 template<class... Ts>
 struct trait_check
