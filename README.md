@@ -148,7 +148,7 @@ TICK_TRAIT(has_nested_result)
 {
     template<class T>
     auto requires(const T& x) -> TICK_VALID(
-        has_type<T::template result>()
+        has_template<T::template result>()
     );
 };
 ```
