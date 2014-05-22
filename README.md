@@ -272,7 +272,7 @@ The `TICK_TRAIT_CHECK` macro will statically assert the list of traits are true 
 Requirements
 ============
 
-This requires a C++14 compiler. There a no third-party dependencies.
+This requires a C++14 compiler. There a no third-party dependencies. This has been tested on clang 3.4 and gcc 4.9.
 
 ZLang support
 =============
@@ -288,5 +288,3 @@ $(trait is_incrementable)
     );
 };
 ```
-
-
