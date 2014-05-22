@@ -19,7 +19,7 @@ TICK_TRAIT(is_incrementable)
     );
 };
 ```
-And the we can use a simple requires clause in our functions:
+And then we can use a simple requires clause in our functions:
 ```cpp
 template<class T, TICK_REQUIRES(is_incrementable<T>())>
 void increment(T& x)
@@ -28,8 +28,8 @@ void increment(T& x)
 }
 ```
 
-Build trait using the TICK_TRAIT macro
-======================================
+Build traits using the TICK_TRAIT macro
+=======================================
 
 This macro will build a boolean type trait for you. Each trait requires a `requires` member function of the form:
 ```cpp
@@ -46,7 +46,7 @@ The parameters to the trait are based on the parameters to the `requires` functi
 Refinements
 -----------
 
-Refinements can be expressed after the name. Each refinement is a [placeholder expression](http://www.boost.org/doc/libs/1_55_0/libs/mpl/doc/refmanual/placeholder-expression.html), where each placeholder(ie `_1`, `_2`, etc) are replaced by the their corresponding type passed into the trait. In the case of traits that accept a single parameter the unnamed placeholder(`_`) can be used, for example:
+Refinements can be expressed after the name. Each refinement is a [placeholder expression](http://www.boost.org/doc/libs/1_55_0/libs/mpl/doc/refmanual/placeholder-expression.html), where each placeholder(ie `_1`, `_2`, etc) are replaced by their corresponding type passed into the trait. In the case of traits that accept a single parameter the unnamed placeholder(`_`) can be used, for example:
 ```cpp
 TICK_TRAIT(is_incrementable, std::is_default_constructible<_>)
 {
@@ -61,7 +61,9 @@ This trait will be true when `x++` and `++x` are valid expressions and `x` is de
 
 When a trait has multiple parameters, its best to use named placeholders. For example:
 ```cpp
-TICK_TRAIT(is_equality_comparable, std::is_default_constructible<_1>, std::is_default_constructible<_2>)
+TICK_TRAIT(is_equality_comparable, 
+    std::is_default_constructible<_1>, 
+    std::is_default_constructible<_2>)
 {
     template<class T, class U>
     auto requires(T&& x, U&& y) -> TICK_VALID(
@@ -80,13 +82,13 @@ These can be used to query more information about the types then just valid expr
 Type matching
 -------------
 
-When a type is matched, it can either be convertible to the type given, or the evaluate placeholder expression must be true. Placeholder expressions can be given so the type can be matched against other traits.
+When a type is matched, it can either be convertible to the type given, or the evaluated placeholder expression must be true. Placeholder expressions can be given so the type can be matched against other traits.
 
 
 returns
 -------
 
-The `returns` can check if the result of the expressions matches the type. For example,
+The `returns` query can check if the result of the expressions matches the type. For example,
 ```cpp
 TICK_TRAIT(is_incrementable)
 {
@@ -98,7 +100,7 @@ TICK_TRAIT(is_incrementable)
 ```
 This trait will be true if the expressions `x++` is valid and is convertible to `int`.
 
-Here's an example using placeholder expressions:
+Here's an example using placeholder expressions as well:
 ```cpp
 TICK_TRAIT(is_incrementable)
 {
@@ -113,7 +115,7 @@ This trait will be true if the expressions `x++` is valid and returns a type tha
 has_type
 --------
 
-The `has_type` can check if a type exist and if the type matches. For example:
+The `has_type` query can check if a type exist and if the type matches. For example:
 ```cpp
 TICK_TRAIT(has_nested_type)
 {
@@ -140,7 +142,7 @@ This trait will be true if `T` has a nested type called `type` which is an integ
 has_template
 ------------
 
-The `has_template` can check if a template exist. For example:
+The `has_template` query can check if a template exist. For example:
 ```cpp
 TICK_TRAIT(has_nested_result)
 {
@@ -155,7 +157,7 @@ This trait will be true if `T` has a nested template called `result`.
 Trait evaluation
 ----------------
 
-The `is_true` and `is_false` can check if a trait is true or false. Using refinements is the prefer way of checking for additional traits, but this can be usefult if the evaluation of some trait can be used lazily with placeholder expressions. so the `is_true` and `is_false` can be used instead, for example:
+The `is_true` and `is_false` queries can check if a trait is true or false. Using refinements is the preferred way of checking for additional traits, but this can be useful if the evaluation of some trait can't be used lazily with placeholder expressions. So the `is_true` and `is_false` can be used instead, for example:
 ```cpp
 TICK_TRAIT(is_2d_array)
 {
@@ -166,10 +168,10 @@ TICK_TRAIT(is_2d_array)
 };
 ```
 
-Build trait without macros
+Build traits without macros
 ==========================
 
-The traits can be built using macros. Heres how to build them. First, build a class for the `requires` functions and inherit from `tick::ops` to bring in all the query operations:
+The traits can be built using the `TICK_TRAIT` macros. Heres how to build them. First, build a class for the `requires` functions and inherit from `tick::ops` to bring in all the query operations:
 ```cpp
 struct is_incrementable_r : tick::ops
 {
