@@ -226,7 +226,7 @@ Notice, the placeholders have to be fully qualified here.
 Template constraints
 ====================
 
-Three macros are provided to help improve the readability of template constrants.
+Three macros are provided to help improve the readability of template constraints.
 
 TICK_REQUIRES
 -------------
