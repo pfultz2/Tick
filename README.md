@@ -27,6 +27,22 @@ void increment(T& x)
     x++;
 }
 ```
+So if we pass something that is not incrementable to `increment`:
+```cpp
+struct foo {};
+
+foo f;
+increment(f);
+```
+Then we get an error like this in clang:
+
+    demo.cpp:25:2: error: no matching function for call to 'increment'
+            increment(f);
+            ^~~~~~~~~
+    demo.cpp:14:19: note: candidate template ignored: disabled by 'enable_if' [with T = foo]
+    template<class T, TICK_REQUIRES(is_incrementable<T>())>
+                      ^
+
 
 Build traits using the TICK_TRAIT macro
 =======================================
