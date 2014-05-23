@@ -90,8 +90,8 @@ TICK_TRAIT(is_equality_comparable,
 ```
 This trait will be true when `x == y` and `x != y` are valid expressions and both `x` and `y` are default constructible.
 
-Queries operations
-==================
+Query operations
+================
 
 These can be used to query more information about the types then just valid expressions.
 
