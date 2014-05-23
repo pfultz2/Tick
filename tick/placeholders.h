@@ -8,6 +8,8 @@
 #ifndef TICK_GUARD_PLACEHOLDERS_H
 #define TICK_GUARD_PLACEHOLDERS_H
 
+#include <type_traits>
+
 namespace tick {
 
 template<int N>
