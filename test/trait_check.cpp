@@ -5,7 +5,7 @@
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto require(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> TICK_VALID(
         x++
     );
 };

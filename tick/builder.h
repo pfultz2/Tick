@@ -36,7 +36,7 @@ int valid_expr(T &&);
 struct base_requires
 {
     template<class... Ts>
-    int requires(Ts&&...);
+    int requires_(Ts&&...);
 };
 
 }
@@ -132,17 +132,20 @@ struct base_traits_type<T, typename detail::holder<
 };
 
 template<class Trait, class X = void>
-struct trait 
+struct models 
 : std::false_type
 {};
 // TODO: Add axioms
 template<class Trait, class... Ts>
-struct trait<Trait(Ts...), typename detail::holder<
-    decltype(std::declval<Trait>().requires(std::declval<Ts>()...))
+struct models<Trait(Ts...), typename detail::holder<
+    decltype(std::declval<Trait>().requires_(std::declval<Ts>()...))
 >::type>
 : refine_traits<Trait>::template apply<Ts...>
 {};
 
+// Deprecated: Provided here for backwards compatiblity
+template<class Trait>
+using trait = models<Trait>;
 
 #define TICK_TRAIT_REFINES(name, ...) \
 struct tick_private_trait_base_ ## name : tick::ops \
@@ -150,7 +153,7 @@ struct tick_private_trait_base_ ## name : tick::ops \
 struct tick_private_trait_ ## name; \
 template<class... T> \
 struct name \
-: tick::trait<tick_private_trait_ ## name(T...)> \
+: tick::models<tick_private_trait_ ## name(T...)> \
 {}; \
 struct tick_private_trait_ ## name \
 : tick::detail::base_requires, tick::ops, tick_private_trait_base_ ## name::type
