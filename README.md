@@ -13,7 +13,7 @@ For example we could create an `is_incrementable` trait, like this:
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> TICK_VALID(
         x++,
         ++x
     );
@@ -48,7 +48,7 @@ This is pretty concise and gives enough information for most commons cases, howe
     TICK_TRAIT(is_incrementable, std::is_integral<_>)
     {
         template<class T>
-        auto requires(T&& x) -> TICK_VALID(
+        auto requires_(T&& x) -> TICK_VALID(
             x++,
             ++x
         );
@@ -73,7 +73,7 @@ This macro will build a boolean type trait for you. Each trait requires a `requi
 TICK_TRAIT(my_trait)
 {
     template<class T>
-    auto requires(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> TICK_VALID(
         ...
     );
 };
@@ -88,7 +88,7 @@ Refinements can be expressed after the name. Each refinement is a [placeholder e
 TICK_TRAIT(is_incrementable, std::is_default_constructible<_>)
 {
     template<class T>
-    auto requires(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> TICK_VALID(
         x++,
         ++x
     );
@@ -103,7 +103,7 @@ TICK_TRAIT(is_equality_comparable,
     std::is_default_constructible<_2>)
 {
     template<class T, class U>
-    auto requires(T&& x, U&& y) -> TICK_VALID(
+    auto requires_(T&& x, U&& y) -> TICK_VALID(
         x == y,
         x != y
     );
@@ -130,7 +130,7 @@ The `returns` query can check if the result of the expressions matches the type.
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> TICK_VALID(
         returns<int>(x++)
     );
 };
@@ -142,7 +142,7 @@ Here's an example using placeholder expressions as well:
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> TICK_VALID(
         returns<std::is_integral<_>>(x++)
     );
 };
@@ -157,7 +157,7 @@ The `has_type` query can check if a type exist and if the type matches. For exam
 TICK_TRAIT(has_nested_type)
 {
     template<class T>
-    auto requires(const T& x) -> TICK_VALID(
+    auto requires_(const T& x) -> TICK_VALID(
         has_type<typename T::type>()
     );
 };
@@ -169,7 +169,7 @@ Also, an optionally second parameter can be provided to check if the type matche
 TICK_TRAIT(has_nested_int_type)
 {
     template<class T>
-    auto requires(const T& x) -> TICK_VALID(
+    auto requires_(const T& x) -> TICK_VALID(
         has_type<typename T::type, std::is_integral<_>>()
     );
 };
@@ -184,7 +184,7 @@ The `has_template` query can check if a template exist. For example:
 TICK_TRAIT(has_nested_result)
 {
     template<class T>
-    auto requires(const T& x) -> TICK_VALID(
+    auto requires_(const T& x) -> TICK_VALID(
         has_template<T::template result>()
     );
 };
@@ -199,31 +199,31 @@ The `is_true` and `is_false` queries can check if a trait is true or false. Usin
 TICK_TRAIT(is_2d_array)
 {
     template<class T>
-    auto requires(const T& x) -> TICK_VALID(
+    auto requires_(const T& x) -> TICK_VALID(
         is_true<std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >()
     );
 };
 ```
 
 Build traits without macros
-==========================
+===========================
 
 The traits can be built using the `TICK_TRAIT` macros. Heres how to build them. First, build a class for the `requires` functions and inherit from `tick::ops` to bring in all the query operations:
 ```cpp
 struct is_incrementable_r : tick::ops
 {
     template<class T>
-    auto requires(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> TICK_VALID(
         x++,
         ++x
     );
 };
 ```
-Next, turn it into a trait using `tick::trait`:
+Next, turn it into a trait using `tick::models`:
 ```cpp
 template<class... Ts>
 struct is_incrementable
-: tick::trait<is_incrementable_r(Ts...)>
+: tick::models<is_incrementable_r(Ts...)>
 {};
 ```
 
@@ -236,7 +236,7 @@ struct is_incrementable_r
 : tick::ops, tick::refines<std::is_default_constructible<tick::_>>
 {
     template<class T>
-    auto requires(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> TICK_VALID(
         x++,
         ++x
     );
@@ -319,7 +319,7 @@ ZLang support
 $(trait is_incrementable)
 {
     template<class T>
-    auto requires(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> TICK_VALID(
         x++,
         ++x
     );
