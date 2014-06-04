@@ -14,7 +14,11 @@ endif()
 
 set(ENABLE_CXXFLAGS_TO_CHECK 
     -std=gnu++1y 
-    -std=c++1y)
+    -std=c++1y
+    -std=gnu++11 
+    -std=c++11
+    -std=gnu++0x 
+    -std=c++0x)
 
 foreach(flag ${ENABLE_CXXFLAGS_TO_CHECK})
     string(REPLACE "-std=" "_" flag_var ${flag})
