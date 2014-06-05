@@ -1,12 +1,12 @@
 Tick
 ====
 
-Trait introspection and concept creator for C++14
+Trait introspection and concept creator for C++11
 
 Getting Started
 ===============
 
-Tick provides a mechanism for easily defining and using traits in C++14. It is based on ideas developed by Eric Niebler in [this blog post](http://ericniebler.com/2013/11/23/concept-checking-in-c11/).
+Tick provides a mechanism for easily defining and using traits in C++11. It is based on ideas developed by Eric Niebler in [this blog post](http://ericniebler.com/2013/11/23/concept-checking-in-c11/).
 
 For example we could create an `is_incrementable` trait, like this:
 ```cpp
@@ -148,6 +148,17 @@ TICK_TRAIT(is_incrementable)
 };
 ```
 This trait will be true if the expressions `x++` is valid and returns a type that `is_integral`.
+
+Note: The `TICK_RETURNS` macro can be used instead to improve compatability with older compilers(such as gcc 4.6):
+```cpp
+TICK_TRAIT(is_incrementable)
+{
+    template<class T>
+    auto requires_(T&& x) -> TICK_VALID(
+        TICK_RETURNS(x++, int)
+    );
+};
+```
 
 has_type
 --------
@@ -309,7 +320,7 @@ The `TICK_TRAIT_CHECK` macro will statically assert the list of traits are true 
 Requirements
 ============
 
-This requires a C++14 compiler. There a no third-party dependencies. This has been tested on clang 3.4 and gcc 4.9.
+This requires a C++11 compiler. There a no third-party dependencies. This has been tested on clang 3.4 and gcc 4.6-4.9.
 
 ZLang support
 =============
