@@ -28,8 +28,21 @@ struct template_holder
 };
 
 struct void_ {};
-
 template<class T> T&& operator,(T&& x, void_);
+
+template<class T>
+struct bare
+: std::remove_cv<typename std::remove_reference<T>::type>
+{};
+
+template<class T>
+struct avoid
+: std::conditional<
+    std::is_same<typename bare<T>::type, void_>::value,
+    void,
+    T
+>
+{};
 
 template<typename T>
 int valid_expr(T &&);
@@ -40,6 +53,11 @@ struct base_requires
     int requires_(Ts&&...);
 };
 
+template<class T>
+struct always_false
+: tick::integral_constant<bool, false>
+{};
+
 }
 
 #define TICK_VALID(...) decltype(tick::detail::valid_expr((__VA_ARGS__, tick::detail::void_())))
@@ -48,7 +66,10 @@ struct ops : tick::local_placeholders
 {
     template<typename T, typename U>
     static auto returns(U &&) ->
-        typename std::enable_if<detail::matches<U,T>::value, int>::type;
+        typename std::enable_if<detail::matches<typename detail::avoid<U>::type,T>::value, int>::type;
+
+// A macro to provide better compatibility for gcc 4.6
+#define TICK_RETURNS(expr, ...) returns<__VA_ARGS__>((expr, tick::detail::void_()))
 
     template<
         class T, 

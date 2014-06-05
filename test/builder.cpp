@@ -9,7 +9,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto requires_(T&& x) -> TICK_VALID(
-            returns<int>(x.foo())
+            TICK_RETURNS(x.foo(), int)
         );
     };
 
@@ -25,7 +25,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto requires_(T&& x) -> TICK_VALID(
-            returns<std::is_integral<_>>(x.foo())
+            TICK_RETURNS(x.foo(), std::is_integral<_>)
         );
     };
 
