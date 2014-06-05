@@ -10,6 +10,7 @@
 
 #include <tick/detail/matches.h>
 #include <tick/detail/pp.h>
+#include <tick/integral_constant.h>
 
 namespace tick {
 
@@ -76,7 +77,7 @@ struct base_traits;
 
 template<class Trait, class... Traits>
 struct base_traits<Trait, Traits...>
-: std::integral_constant<bool, Trait::value and base_traits<Traits...>::value>
+: tick::integral_constant<bool, Trait::value and base_traits<Traits...>::value>
 {
     typedef base_traits<Trait, Traits...> base_traits_type;
 };
