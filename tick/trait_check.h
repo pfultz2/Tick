@@ -40,7 +40,7 @@ struct trait_check_push_back<T, TRAIT_CHECK_FAILURE<Ts...>>
 template<class T>
 struct box
 {
-    using type = T;
+    typedef T type;
 };
 
 template<class TraitCheck, class T>

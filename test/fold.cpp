@@ -6,9 +6,6 @@
 template<class... Ts>
 struct list {};
 
-template<int... Ns>
-using list_c = list<std::integral_constant<int, Ns>...>;
-
 TICK_STATIC_TEST_CASE()
 {
     typedef list<long,float,short,double,float,long,long double> types;

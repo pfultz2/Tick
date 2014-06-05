@@ -146,7 +146,8 @@ struct models<Trait(Ts...), typename detail::holder<
 
 // Deprecated: Provided here for backwards compatiblity
 template<class Trait>
-using trait = models<Trait>;
+struct trait : models<Trait>
+{};
 
 #define TICK_TRAIT_REFINES(name, ...) \
 struct tick_private_trait_base_ ## name : tick::ops \

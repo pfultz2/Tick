@@ -13,13 +13,19 @@ namespace tick { namespace detail {
 template <bool done> struct fold_impl 
 {
     template <template <class ...> class F, class State, class X, class ...Xs>
-    using result = typename fold_impl<sizeof...(Xs) == 0>::template result<F, typename F<State, X>::type, Xs...>;
+    struct apply
+    {
+        typedef typename fold_impl<sizeof...(Xs) == 0>::template apply<F, typename F<State, X>::type, Xs...>::type type;
+    };
 };
 
 template <> struct fold_impl<true> 
 {
     template <template <class ...> class F, class State, class ...>
-    using result = State;
+    struct apply
+    {
+        typedef State type;
+    };
 };
 
 template <class List, class State, template <class ...> class F>
@@ -28,8 +34,7 @@ struct fold;
 template <template <class ...> class List, class State, template <class ...> class F, class ...Xs>
 struct fold<List<Xs...>, State, F>
 {
-    using type = typename fold_impl<sizeof...(Xs) == 0>::
-                 template result<F, State, Xs...>;
+    typedef typename fold_impl<sizeof...(Xs) == 0>::template apply<F, State, Xs...>::type type;
 };
 
 }}

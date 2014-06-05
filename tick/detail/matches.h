@@ -20,7 +20,7 @@ struct tuple_replace
     struct apply
     : std::tuple_element<Placeholder::value - 1, Tuple>
     {
-        static_assert(Placeholder::value <= std::tuple_size<Tuple>(), "Invalid placeholder");
+        static_assert(Placeholder::value <= std::tuple_size<Tuple>::value, "Invalid placeholder");
     };
 };
 
@@ -31,14 +31,14 @@ struct single_replace
     struct apply
     {
         static_assert(Placeholder::value == 1, "Invalid placeholder");
-        using type = T;
+        typedef T type;
     };
 };
 
 template<class F, class Replacer>
 struct replace_args_recursive
 {
-    using type = F;
+    typedef F type;
 };
 
 template<int N, class Replacer>
