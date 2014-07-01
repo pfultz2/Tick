@@ -1,0 +1,11 @@
+site_name: Tick
+docs_dir: doc/src
+site_dir: doc/html/
+repo_url: https://github.com/pfultz2/Tick
+pages:
+- ['index.md', 'Home']
+- ['builder.md', 'User Guide', 'Creating a Trait']
+- ['requires.md', 'User Guide', 'Template constraints']
+- ['check.md', 'User Guide', 'Checking a Trait']
+- ['requirements.md', 'About', 'Requirements']
+- ['zlang.md', 'About', 'ZLang']
