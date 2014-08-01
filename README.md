@@ -64,7 +64,6 @@ Which will produce this error:
 
 Which shows the traits that failed including any refinements. So we can see that it failed because `std::is_integral<int *>` is not true.
 
-
 Build traits using the TICK_TRAIT macro
 =======================================
 
