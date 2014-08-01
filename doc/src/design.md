@@ -20,7 +20,6 @@ Currently, Tick does not support tag-dispatching for overloading functions. That
         );
     };
 
-
     TICK_TRAIT(is_advanceable, is_incrementable<_>)
     {
         template<class T, class I>
@@ -36,7 +35,6 @@ Currently, Tick does not support tag-dispatching for overloading functions. That
         {
             it += n;
         }
-
     };
 
     struct advance_incrementable
@@ -46,7 +44,6 @@ Currently, Tick does not support tag-dispatching for overloading functions. That
         {
             while (n--) ++it;
         }
-
     };
 
     static fit::static_<fit::conditional_adaptor<advance_advanceable, advance_incrementable>> advance = {};
