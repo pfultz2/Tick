@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cat src/index.md src/builder.md src/requires.md src/check.md src/requirements.md src/zlang.md
