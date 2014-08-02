@@ -12,9 +12,6 @@
 
 namespace tick {
 
-template<bool B>
-using requires = typename std::enable_if<B, int>::type;
-
 }
  
 #define TICK_ERROR_PARENTHESIS_MUST_BE_PLACED_AROUND_THE_RETURN_TYPE(...) __VA_ARGS__>::type
@@ -22,6 +19,7 @@ using requires = typename std::enable_if<B, int>::type;
 
 #define TICK_CLASS_REQUIRES(...) typename std::enable_if<(__VA_ARGS__)>::type
 
+#define TICK_MEMBER_REQUIRES(...) template<bool TickMemberBool=true, typename std::enable_if<TickMemberBool && (__VA_ARGS__), int>::type = 0>
 #define TICK_REQUIRES(...) typename std::enable_if<(__VA_ARGS__), int>::type = 0
 
 #endif

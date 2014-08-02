@@ -15,8 +15,6 @@ void increment(T& x)
 }
 ```
 
-This can also be used with classes.
-
 TICK_CLASS_REQUIRES
 -------------------
 
@@ -38,6 +36,24 @@ template<class T>
 struct foo<T, TICK_CLASS_REQUIRES(std::is_integral<T>())>
 {
     ...
+};
+```
+
+TICK_MEMBER_REQUIRES
+--------------------
+
+The `TICK_MEMBER_REQUIRES` can be used for member function inside of classes. For example,
+```cpp
+template<class T>
+struct foo
+{
+    T x;
+
+    TICK_MEMBER_REQUIRES(is_incrementable<T>())
+    void up()
+    {
+        x++;
+    }
 };
 ```
 
