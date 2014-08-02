@@ -14,7 +14,7 @@ Currently, Tick does not support tag-dispatching for overloading functions. That
     TICK_TRAIT(is_incrementable)
     {
         template<class T>
-        auto requires(T&& x) -> TICK_VALID(
+        auto requires(T&& x) -> decltype(
             x++,
             ++x
         );
@@ -23,7 +23,7 @@ Currently, Tick does not support tag-dispatching for overloading functions. That
     TICK_TRAIT(is_advanceable, is_incrementable<_>)
     {
         template<class T, class I>
-        auto requires(T&& x, I&& i) -> TICK_VALID(
+        auto requires(T&& x, I&& i) -> decltype(
             x += i
         );
     };

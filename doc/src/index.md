@@ -13,7 +13,7 @@ For example we could create an `is_incrementable` trait, like this:
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> TICK_VALID(
+    auto requires_(T&& x) -> decltype(
         x++,
         ++x
     );
@@ -48,7 +48,7 @@ This is pretty concise and gives enough information for most commons cases, howe
     TICK_TRAIT(is_incrementable, std::is_integral<_>)
     {
         template<class T>
-        auto requires_(T&& x) -> TICK_VALID(
+        auto requires_(T&& x) -> decltype(
             x++,
             ++x
         );

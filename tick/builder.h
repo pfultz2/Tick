@@ -60,7 +60,8 @@ struct always_false
 
 }
 
-#define TICK_VALID(...) decltype(tick::detail::valid_expr((__VA_ARGS__, tick::detail::void_())))
+// Deprecated: TICK_VALID is no loneger necessary
+#define TICK_VALID(...) decltype(__VA_ARGS__)
 
 struct ops : tick::local_placeholders
 {
