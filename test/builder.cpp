@@ -36,6 +36,14 @@ TICK_STATIC_TEST_CASE()
             x.foo()
         );
     };
+    // TICK_TRAIT(has_void_foo_member)
+    // {
+    //     template<class T>
+    //     auto requires_(T&& x) -> decltype(
+    //         returns<void>(x.foo())
+    //         // TICK_RETURNS(x.foo(), void)
+    //     );
+    // };
     // TODO: test base traits
     struct foo_member
     {
@@ -77,6 +85,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TEST_TEMPLATE(test_foo_member<has_more_foo_member, false>);
     TICK_TEST_TEMPLATE(test_foo_member<has_integral_foo_member, false>);
     TICK_TEST_TEMPLATE(test_foo_member<has_simple_foo_member, true>);
+    // TICK_TEST_TEMPLATE(test_foo_member<has_void_foo_member, true>);
 
 };
 

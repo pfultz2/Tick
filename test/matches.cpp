@@ -24,6 +24,7 @@ TICK_TEST_CASE()
     static_assert(tick::detail::matches<int, int>::value, "int -> int doesn't match");
     static_assert(tick::detail::matches<int, float>::value, "int -> float doesn't match");
     static_assert(tick::detail::matches<int, void>::value, "int -> void doesn't match");
+    static_assert(tick::detail::matches<void, void>::value, "void -> void doesn't match");
 
     static_assert(tick::detail::matches<std::is_integral<tick::_>, int>::value, "is_integral<int> failed");
     static_assert(tick::detail::matches<std::is_integral<tick::_>, float>::value, "is_integral<float> failed");

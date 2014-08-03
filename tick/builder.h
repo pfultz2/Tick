@@ -44,6 +44,21 @@ struct avoid
 >
 {};
 
+template<class T>
+struct is_void
+: std::is_same<T, void>
+{};
+
+template<class T>
+struct is_void<std::is_same<T, void>>
+: std::true_type
+{};
+
+template<class T>
+struct is_void<std::is_same<void, T>>
+: std::true_type
+{};
+
 template<typename T>
 int valid_expr(T &&);
 
@@ -58,19 +73,29 @@ struct always_false
 : tick::integral_constant<bool, false>
 {};
 
+template<class T, class U>
+struct return_matches
+: detail::matches<typename detail::avoid<U>::type,T>
+{
+    static_assert(!detail::is_void<T>::value, "Void can't be used for returns");
+};
+
 }
 
 // Deprecated: TICK_VALID is no loneger necessary
 #define TICK_VALID(...) decltype(__VA_ARGS__)
 
+
 struct ops : tick::local_placeholders
 {
+
     template<typename T, typename U>
     static auto returns(U &&) ->
-        typename std::enable_if<detail::matches<typename detail::avoid<U>::type,T>::value, int>::type;
+        typename std::enable_if<detail::return_matches<T,U>::value, int>::type;
 
 // A macro to provide better compatibility for gcc 4.6
 #define TICK_RETURNS(expr, ...) returns<__VA_ARGS__>((expr, tick::detail::void_()))
+// #define TICK_RETURNS(expr, ...) returns<__VA_ARGS__>(expr)
 
     template<
         class T, 
