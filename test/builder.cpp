@@ -180,6 +180,103 @@ TICK_STATIC_TEST_CASE()
 
 };
 
+namespace wtf {
+    struct left_comma {};
+    template<class T> T operator,(T, left_comma);
+
+    struct right_comma {};
+    template<class T> T operator,(right_comma, T);
+}
+
+
+TICK_STATIC_TEST_CASE()
+{
+    struct comma_guard
+    {
+        struct any
+        {
+            template<class T>
+            any(T&&);
+        };
+        const comma_guard& operator,(any) const;
+        // friend const comma_guard& operator,(any, comma_guard);
+        // friend const comma_guard& operator,(comma_guard, any);
+    };
+
+    // Disable this test for comma_guard since it fails
+    // typedef typename tick::detail::bare<decltype(comma_guard(), ((void)0), wtf::left_comma(), 0)>::type comma_guard_result;
+    // STATIC_ASSERT_SAME(comma_guard_result, comma_guard);
+
+
+    TICK_TRAIT(has_funs)
+    {
+        template<class T>
+        auto requires_(T&& x) -> decltype(
+            // comma_guard(),
+            (void)x.f1(),
+            (void)x.f2(),
+            (void)x.f3()
+        );
+    };
+
+    template<class T, class U>
+    struct f1_T
+    {
+        T f1();
+        U f2();
+        U f3();
+    };
+
+    template<class T, class U>
+    struct f2_T
+    {
+        U f1();
+        T f2();
+        U f3();
+    };
+
+    template<class T, class U>
+    struct void_f1
+    {
+        void f1();
+        T f2();
+        U f3();
+    };
+
+    struct no_funs {};
+
+    template<template<class...> class F>
+    struct test_funs
+    {
+        struct some_type {};
+        struct noncopyable_type
+        {
+            noncopyable_type(const noncopyable_type&) = delete;
+            noncopyable_type(noncopyable_type&) = delete;
+            noncopyable_type(noncopyable_type&&) = delete;
+        };
+        static_assert(has_funs<F<int, int>>::value, "No funs");
+        static_assert(has_funs<F<void, int>>::value, "No funs");
+        static_assert(has_funs<F<int, void>>::value, "No funs");
+
+        static_assert(has_funs<F<wtf::left_comma, some_type>>::value, "No funs");
+        static_assert(has_funs<F<wtf::right_comma, some_type>>::value, "No funs");
+
+        static_assert(has_funs<F<wtf::left_comma, noncopyable_type>>::value, "No funs");
+        static_assert(has_funs<F<wtf::right_comma, noncopyable_type>>::value, "No funs");
+
+        static_assert(has_funs<F<wtf::left_comma, void>>::value, "No funs");
+        static_assert(has_funs<F<wtf::right_comma, void>>::value, "No funs");
+
+    };
+
+
+    static_assert(!has_funs<no_funs>::value, "Found funs");
+    TICK_TEST_TEMPLATE(test_funs<f1_T>);
+    TICK_TEST_TEMPLATE(test_funs<f2_T>);
+    TICK_TEST_TEMPLATE(test_funs<void_f1>);
+};
+
 TICK_STATIC_TEST_CASE()
 {
     TICK_TRAIT(has_nested_type)
