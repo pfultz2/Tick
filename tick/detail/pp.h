@@ -11,6 +11,9 @@
 #define TICK_PP_CAT(x, y) TICK_PP_PRIMITIVE_CAT(x, y)
 #define TICK_PP_PRIMITIVE_CAT(x, y) x ## y
 
+#define TICK_PP_SEQ_ITERATE(...) TICK_PP_PRIMITIVE_SEQ_ITERATE(__VA_ARGS__)
+#define TICK_PP_PRIMITIVE_SEQ_ITERATE(...) __VA_ARGS__ ## _END
+
 // 
 // TICK_PP_NARGS returns the number of args in __VA_ARGS__
 // 

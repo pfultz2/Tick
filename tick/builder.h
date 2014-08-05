@@ -82,8 +82,17 @@ struct return_matches
 
 }
 
-// Deprecated: TICK_VALID is no loneger necessary
-#define TICK_VALID(...) decltype(__VA_ARGS__)
+template<class...>
+struct valid {};
+
+#define TICK_VALID_DECLTYPE_1(...) decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_2
+#define TICK_VALID_DECLTYPE_2(...) ,decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_3
+#define TICK_VALID_DECLTYPE_3(...) ,decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_2
+#define TICK_VALID_DECLTYPE_1_END
+#define TICK_VALID_DECLTYPE_2_END
+#define TICK_VALID_DECLTYPE_3_END
+
+#define TICK_VALID(seq) tick::valid<TICK_PP_SEQ_ITERATE(TICK_VALID_DECLTYPE_1 seq)>
 
 
 struct ops : tick::local_placeholders
