@@ -12,6 +12,19 @@
 #include <tick/detail/pp.h>
 #include <tick/integral_constant.h>
 
+
+#ifndef TICK_HAS_TEMPLATE_ALIAS
+#   if defined (__GNUC__) && !defined (__clang__)
+#       if __GNUC__ == 4 && __GNUC_MINOR__ < 7
+#           define TICK_HAS_TEMPLATE_ALIAS 0
+#       else
+#           define TICK_HAS_TEMPLATE_ALIAS 1
+#       endif
+#   else
+#   define TICK_HAS_TEMPLATE_ALIAS 1
+#   endif
+#endif
+
 namespace tick {
 
 namespace detail {
@@ -85,46 +98,71 @@ struct return_matches
 template<class...>
 struct valid {};
 
-#define TICK_VALID_DECLTYPE_1(...) decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_2
-#define TICK_VALID_DECLTYPE_2(...) ,decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_3
-#define TICK_VALID_DECLTYPE_3(...) ,decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_2
-#define TICK_VALID_DECLTYPE_1_END
-#define TICK_VALID_DECLTYPE_2_END
-#define TICK_VALID_DECLTYPE_3_END
+// #define TICK_VALID_DECLTYPE_1(...) decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_2
+// #define TICK_VALID_DECLTYPE_2(...) ,decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_3
+// #define TICK_VALID_DECLTYPE_3(...) ,decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_2
+// #define TICK_VALID_DECLTYPE_1_END
+// #define TICK_VALID_DECLTYPE_2_END
+// #define TICK_VALID_DECLTYPE_3_END
 
-#define TICK_VALID(seq) tick::valid<TICK_PP_SEQ_ITERATE(TICK_VALID_DECLTYPE_1 seq)>
+// #define TICK_VALID(seq) tick::valid<TICK_PP_SEQ_ITERATE(TICK_VALID_DECLTYPE_1 seq)>
 
 
-struct ops : tick::local_placeholders
+class ops : public tick::local_placeholders
 {
+    struct private_type {};
+    template<bool B>
+    struct private_enable_if
+    : std::enable_if<B, private_type>
+    {};
+    template<class T, class U> 
+    struct has_type_ : private_enable_if<detail::matches<T,U>::value> {};
+    template<class T> 
+    struct is_true_ : private_enable_if<T::value> {};
+    template<class T> 
+    struct is_false_ : private_enable_if<not T::value> {};
+
+public:
 
     template<typename T, typename U>
     static auto returns(U &&) ->
         typename std::enable_if<detail::return_matches<T,U>::value, int>::type;
 
 // A macro to provide better compatibility for gcc 4.6
-#define TICK_RETURNS(expr, ...) returns<__VA_ARGS__>((expr, tick::detail::void_()))
-// #define TICK_RETURNS(expr, ...) returns<__VA_ARGS__>(expr)
+#define TICK_RETURNS(expr, ...) decltype(returns<__VA_ARGS__>((expr, tick::detail::void_())))
 
-    template<
-        class T, 
-        class U = void, 
-        class Enable = typename std::enable_if<detail::matches<T,U>::value>::type>
-    class has_type {};
+
+#if TICK_HAS_TEMPLATE_ALIAS
+template<class T, class U=void>
+using has_type = typename has_type_<T, U>::type; 
+
+template<class T>
+using is_true = typename is_true_<T>::type; 
+
+template<class T>
+using is_false = typename is_false_<T>::type; 
+
+#define TICK_HAS_TYPE(...) has_type<__VA_ARGS__>
+#define TICK_IS_TRUE(...) is_true<__VA_ARGS__>
+#define TICK_IS_FALSE(...) is_false<__VA_ARGS__>
+#else
+template<class T, class U=void, class Enable=typename has_type_<T, U>::type>
+struct has_type {}; 
+
+template<class T, class Enable=typename is_true_<T>::type>
+struct is_true {}; 
+
+template<class T, class Enable=typename is_false_<T>::type>
+struct is_false {}; 
+
+#define TICK_HAS_TYPE(...) decltype(has_type<__VA_ARGS__>())
+#define TICK_IS_TRUE(...) decltype(is_true<__VA_ARGS__>())
+#define TICK_IS_FALSE(...) decltype(is_false<__VA_ARGS__>())
+#endif
+
 
     template<template<class...> class Template>
     class has_template {};
-
-    // TODO: Try to make a compile error if T::value doesn't exists
-    template<
-        class T, 
-        class Enable = typename std::enable_if<T::value>::type>
-    class is_true {};
-
-    template<
-        class T, 
-        class Enable = typename std::enable_if<not T::value>::type>
-    class is_false {};
 
 };
 

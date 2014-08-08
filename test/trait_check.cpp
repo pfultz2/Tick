@@ -5,9 +5,9 @@
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> TICK_VALID(
-        (x++)
-    );
+    auto requires_(T&& x) -> tick::valid<
+        decltype(x++)
+    >;
 };
 
 TICK_TRAIT(is_integer_incrementable, is_incrementable<_>, std::is_integral<_>)
