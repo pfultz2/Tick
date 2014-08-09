@@ -13,10 +13,10 @@ For example we could create an `is_incrementable` trait, like this:
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(
-        x++,
-        ++x
-    );
+    auto requires_(T&& x) -> tick::valid<
+        decltype(x++),
+        decltype(++x)
+    >;
 };
 ```
 And then we can use a simple requires clause in our functions:
@@ -48,10 +48,10 @@ This is pretty concise and gives enough information for most commons cases, howe
     TICK_TRAIT(is_incrementable, std::is_integral<_>)
     {
         template<class T>
-        auto requires_(T&& x) -> decltype(
-            x++,
-            ++x
-        );
+        auto requires_(T&& x) -> tick::valid<
+            decltype(x++),
+            decltype(++x)
+        >;
     };
 
 Then if we use `TICK_TRAIT_CHECK`, we can see why `int*` is not incrementable:
