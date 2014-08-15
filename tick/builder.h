@@ -228,11 +228,6 @@ struct models<Trait(Ts...), typename detail::holder<
 : refine_traits<Trait>::template apply<Ts...>
 {};
 
-// Deprecated: Provided here for backwards compatiblity
-template<class Trait>
-struct trait : models<Trait>
-{};
-
 #define TICK_TRAIT_REFINES(name, ...) \
 struct tick_private_trait_base_ ## name : tick::ops \
 { typedef tick::refines<__VA_ARGS__> type; }; \
