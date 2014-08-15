@@ -93,19 +93,12 @@ struct return_matches
     static_assert(!detail::is_void<T>::value, "Void can't be used for returns");
 };
 
+template<bool...> struct bool_seq {};
+
 }
 
 template<class...>
 struct valid {};
-
-// #define TICK_VALID_DECLTYPE_1(...) decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_2
-// #define TICK_VALID_DECLTYPE_2(...) ,decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_3
-// #define TICK_VALID_DECLTYPE_3(...) ,decltype(__VA_ARGS__) TICK_VALID_DECLTYPE_2
-// #define TICK_VALID_DECLTYPE_1_END
-// #define TICK_VALID_DECLTYPE_2_END
-// #define TICK_VALID_DECLTYPE_3_END
-
-// #define TICK_VALID(seq) tick::valid<TICK_PP_SEQ_ITERATE(TICK_VALID_DECLTYPE_1 seq)>
 
 
 class ops : public tick::local_placeholders
@@ -167,20 +160,17 @@ struct is_false {};
 };
 
 template<class... Traits>
-struct base_traits;
+struct base_traits
+: tick::integral_constant<bool, 
+    std::is_same<
+        detail::bool_seq<Traits::value...>, 
+        detail::bool_seq<(Traits::value, true)...>
+    >::type::value
+>
+{
+    typedef base_traits<Traits...> base_traits_type;
+};
 
-template<class Trait, class... Traits>
-struct base_traits<Trait, Traits...>
-: tick::integral_constant<bool, Trait::value and base_traits<Traits...>::value>
-{
-    typedef base_traits<Trait, Traits...> base_traits_type;
-};
-template<>
-struct base_traits<>
-: std::true_type
-{
-    typedef base_traits<> base_traits_type;
-};
 template<class... Lambdas>
 struct refines
 {
