@@ -9,6 +9,7 @@ pages:
 - ['requires.md', 'User Guide', 'Template constraints']
 - ['check.md', 'User Guide', 'Checking a Trait']
 - ['requirements.md', 'About', 'Requirements']
+- ['acknowledgments.md', 'About', 'Acknowledgments']
 - ['design.md', 'About', 'Design Notes']
 - ['zlang.md', 'About', 'ZLang']
 - ['license.md', 'About', 'License']
