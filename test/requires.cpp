@@ -89,3 +89,29 @@ TICK_STATIC_TEST_CASE()
     STATIC_ASSERT_SAME(decltype(check_member_requires<int>().foo()), std::true_type);
     STATIC_ASSERT_SAME(decltype(check_member_requires<not_int>().foo()), std::false_type);
 };
+
+TICK_STATIC_TEST_CASE()
+{
+    template<class T>
+    struct check_member_requires
+    {
+        T x;
+
+        TICK_MEMBER_REQUIRES(std::is_integral<T>::value)
+        (int) foo()
+        {
+            x += 1;
+            return x;
+        }
+
+        TICK_MEMBER_REQUIRES(!std::is_integral<T>::value)
+        (int) foo()
+        {
+            return 0;
+        }
+    };
+
+    STATIC_ASSERT_SAME(decltype(check_member_requires<int>().foo()), int);
+    STATIC_ASSERT_SAME(decltype(check_member_requires<not_int>().foo()), int);
+};
+
