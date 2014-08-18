@@ -73,14 +73,14 @@ TICK_STATIC_TEST_CASE()
         T x;
 
         TICK_MEMBER_REQUIRES(std::is_integral<T>::value)
-        std::true_type foo()
+        (std::true_type) foo()
         {
             x += 1;
             return std::true_type();
         }
 
         TICK_MEMBER_REQUIRES(!std::is_integral<T>::value)
-        std::false_type foo()
+        (std::false_type) foo()
         {
             return std::false_type();
         }

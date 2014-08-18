@@ -19,7 +19,7 @@ namespace tick {
 
 #define TICK_CLASS_REQUIRES(...) typename std::enable_if<(__VA_ARGS__)>::type
 
-#define TICK_MEMBER_REQUIRES(...) template<bool TickMemberBool=true, typename std::enable_if<TickMemberBool && (__VA_ARGS__), int>::type = 0>
-#define TICK_REQUIRES(...) typename std::enable_if<(__VA_ARGS__), int>::type = 0
+#define TICK_MEMBER_REQUIRES(...) template<bool TickMemberBool ## __LINE__=true> TICK_FUNCTION_REQUIRES(TickMemberBool ## __LINE__ && (__VA_ARGS__))
+#define TICK_REQUIRES(...) bool TickMemberBool ## __LINE__=true, typename std::enable_if<TickMemberBool ## __LINE__ && (__VA_ARGS__), int>::type = 0
 
 #endif
