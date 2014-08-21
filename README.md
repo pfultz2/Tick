@@ -6,20 +6,28 @@ Trait introspection and concept creator for C++11
 Getting Started
 ===============
 
-Tick provides a mechanism for easily defining and using traits in C++11. It is based on ideas developed by Eric Niebler in [this blog post](http://ericniebler.com/2013/11/23/concept-checking-in-c11/).
+Tick provides a mechanism for easily defining and using traits in C++11. For example, if we defined a generic `increment` function, like this:
+```cpp
+template<class T>
+void increment(T& x)
+{
+    x++;
+}
+```
+If we pass something that does not have the `++` operator to `increment`, we will get an error inside of the `increment` function. This can make it unclear whether the error is due to a mistake by the user of the function or by the implementor of the function. Instead we want to check the type requirements of the function. 
 
-For example we could create an `is_incrementable` trait, like this:
+Using Tick we can create an `is_incrementable` trait, like this:
 ```cpp
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(
-        x++,
-        ++x
-    );
+    auto requires_(T&& x) -> tick::valid<
+        decltype(x++),
+        decltype(++x)
+    >;
 };
 ```
-And then we can use a simple requires clause in our functions:
+And then we can use a simple requires clause in our function to check the type requirements:
 ```cpp
 template<class T, TICK_REQUIRES(is_incrementable<T>())>
 void increment(T& x)
@@ -27,7 +35,7 @@ void increment(T& x)
     x++;
 }
 ```
-So if we pass something that is not incrementable to `increment`:
+So, now, if we pass something that is not incrementable to `increment`:
 ```cpp
 struct foo {};
 
@@ -43,21 +51,21 @@ Then we get an error like this in clang:
     template<class T, TICK_REQUIRES(is_incrementable<T>())>
                       ^
 
-This is pretty concise and gives enough information for most commons cases, however, sometimes we may want more information. In that case the `TICK_TRAIT_CHECK` can be used. For example, say we had a `is_incrementable` type defined like this:
-
-    TICK_TRAIT(is_incrementable, std::is_integral<_>)
-    {
-        template<class T>
-        auto requires_(T&& x) -> decltype(
-            x++,
-            ++x
-        );
-    };
-
+This gives an error at the call to `increment` rather than inside the function, and then pointes to the type requirements of the function. This gives enough information for most commons cases, however, sometimes we may want more information. In that case the `TICK_TRAIT_CHECK` can be used. For example, say we had the `is_incrementable` trait defined like this:
+```cpp
+TICK_TRAIT(is_incrementable, std::is_integral<_>)
+{
+    template<class T>
+    auto requires_(T&& x) -> tick::valid<
+        decltype(x++),
+        decltype(++x)
+    >;
+};
+```
 Then if we use `TICK_TRAIT_CHECK`, we can see why `int*` is not incrementable:
-
-    TICK_TRAIT_CHECK(is_incrementable<int*>);
-
+```cpp
+TICK_TRAIT_CHECK(is_incrementable<int*>);
+```
 Which will produce this error:
 
     ../tick/trait_check.h:95:38: error: implicit instantiation of undefined template 'tick::TRAIT_CHECK_FAILURE<std::is_integral<int *>, is_incrementable<int *> >'
@@ -67,17 +75,27 @@ Which shows the traits that failed including any refinements. So we can see that
 Build traits using the TICK_TRAIT macro
 =======================================
 
-This macro will build a boolean type trait for you. Each trait requires a `requires` member function of the form:
+This macro will build a boolean type trait for you. Each trait has a `requires_` member function of the form:
 ```cpp
 TICK_TRAIT(my_trait)
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(
+    auto requires_(T&& x) -> tick::valid<
         ...
-    );
+    >;
 };
 ```
-The parameters to the trait are based on the parameters to the `requires` function. Then inside the `decltype`, all the expressions are placed that will be check for. If one of the expressions is not valid, the the trait will return false. 
+The parameters to the trait are based on the parameters passed to the `requires_` function. Then inside the `tick::valid`, all the expressions are placed that will be check for. Each expression in `tick::valid` needs a `decltype` around it. If one of the expressions is not valid, the the trait will return false. For example,
+```cpp
+TICK_TRAIT(my_trait)
+{
+    template<class T>
+    auto requires_(T&& x) -> tick::valid<
+        decltype(x++)
+    >;
+};
+```
+The trait above will check that `x++` is a valid expression.
 
 Refinements
 -----------
@@ -87,10 +105,10 @@ Refinements can be expressed after the name. Each refinement is a [placeholder e
 TICK_TRAIT(is_incrementable, std::is_default_constructible<_>)
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(
-        x++,
-        ++x
-    );
+    auto requires_(T&& x) -> tick::valid<
+        decltype(x++),
+        decltype(++x)
+    >;
 };
 ```
 This trait will be true when `x++` and `++x` are valid expressions and `x` is default constructible.
@@ -102,10 +120,10 @@ TICK_TRAIT(is_equality_comparable,
     std::is_default_constructible<_2>)
 {
     template<class T, class U>
-    auto requires_(T&& x, U&& y) -> decltype(
-        x == y,
-        x != y
-    );
+    auto requires_(T&& x, U&& y) -> tick::valid<
+        decltype(x == y),
+        decltype(x != y)
+    >;
 };
 ```
 This trait will be true when `x == y` and `x != y` are valid expressions and both `x` and `y` are default constructible.
@@ -129,9 +147,9 @@ The `returns` query can check if the result of the expressions matches the type.
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(
-        returns<int>(x++)
-    );
+    auto requires_(T&& x) -> tick::valid<
+        decltype(returns<int>(x++))
+    >;
 };
 ```
 This trait will be true if the expressions `x++` is valid and is convertible to `int`.
@@ -141,9 +159,9 @@ Here's an example using placeholder expressions as well:
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(
-        returns<std::is_integral<_>>(x++)
-    );
+    auto requires_(T&& x) -> tick::valid<
+        decltype(returns<std::is_integral<_>>(x++))
+    >;
 };
 ```
 This trait will be true if the expressions `x++` is valid and returns a type that `is_integral`.
@@ -153,9 +171,9 @@ Note: The `TICK_RETURNS` macro can be used instead to improve compatability with
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(
+    auto requires_(T&& x) -> tick::valid<
         TICK_RETURNS(x++, int)
-    );
+    >;
 };
 ```
 
@@ -167,24 +185,55 @@ The `has_type` query can check if a type exist and if the type matches. For exam
 TICK_TRAIT(has_nested_type)
 {
     template<class T>
-    auto requires_(const T& x) -> decltype(
-        has_type<typename T::type>()
-    );
+    auto requires_(const T& x) -> tick::valid<
+        has_type<typename T::type>
+    >;
 };
 ```
 This trait will be true if `T` has a nested type called `type`.
 
-Also, an optionally second parameter can be provided to check if the type matches. Here's an example:
+Now `has_type` used as above is not quite as useful since the above example, can also be simply written without `has_type` like this:
+```cpp
+TICK_TRAIT(has_nested_type)
+{
+    template<class T>
+    auto requires_(const T& x) -> tick::valid<
+        typename T::type
+    >;
+};
+```
+So, an optional second parameter can be provided to check if the type matches. Here's an example:
 ```cpp
 TICK_TRAIT(has_nested_int_type)
 {
     template<class T>
-    auto requires_(const T& x) -> decltype(
-        has_type<typename T::type, std::is_integral<_>>()
-    );
+    auto requires_(const T& x) -> tick::valid<
+        has_type<typename T::type, std::is_integral<_>>
+    >;
 };
 ```
 This trait will be true if `T` has a nested type called `type` which is an integral type.
+
+Note: For older compilers such as gcc 4.6 the `has_type` has to be used inside of a `decltype`, like this:
+```cpp
+TICK_TRAIT(has_nested_int_type)
+{
+    template<class T>
+    auto requires_(const T& x) -> tick::valid<
+        decltype(has_type<typename T::type, std::is_integral<_>>())
+    >;
+};
+```
+Also, a `TICK_HAS_TYPE` macro is provided as well, which takes care of wrapping it in a `decltype`:
+```cpp
+TICK_TRAIT(has_nested_int_type)
+{
+    template<class T>
+    auto requires_(const T& x) -> tick::valid<
+        TICK_HAS_TYPE(typename T::type, std::is_integral<_>>)
+    >;
+};
+```
 
 has_template
 ------------
@@ -194,9 +243,9 @@ The `has_template` query can check if a template exist. For example:
 TICK_TRAIT(has_nested_result)
 {
     template<class T>
-    auto requires_(const T& x) -> decltype(
-        has_template<T::template result>()
-    );
+    auto requires_(const T& x) -> tick::valid<
+        has_template<T::template result>
+    >;
 };
 ```
 This trait will be true if `T` has a nested template called `result`.
@@ -209,24 +258,45 @@ The `is_true` and `is_false` queries can check if a trait is true or false. Usin
 TICK_TRAIT(is_2d_array)
 {
     template<class T>
-    auto requires_(const T& x) -> decltype(
-        is_true<std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >()
-    );
+    auto requires_(const T& x) -> tick::valid<
+        is_true<std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >
+    >;
+};
+```
+
+Note: For older compilers such as gcc 4.6 the `is_true` has to be used inside of a `decltype`, like this:
+```cpp
+TICK_TRAIT(is_2d_array)
+{
+    template<class T>
+    auto requires_(const T& x) -> tick::valid<
+        decltype(is_true<std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >())
+    >;
+};
+```
+Also the macros `TICK_IS_TRUE` and `TICK_IS_FALSE` are provided as well,  which takes care of wrapping it in a `decltype`:
+```cpp
+TICK_TRAIT(is_2d_array)
+{
+    template<class T>
+    auto requires_(const T& x) -> tick::valid<
+        TICK_IS_TRUE(std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >)
+    >;
 };
 ```
 
 Build traits without macros
 ===========================
 
-The traits can be built using the `TICK_TRAIT` macros. Heres how to build them. First, build a class for the `requires` functions and inherit from `tick::ops` to bring in all the query operations:
+The traits can be built using the `TICK_TRAIT` macros. Heres how to build them. First, build a class for the `requires_` functions and inherit from `tick::ops` to bring in all the query operations:
 ```cpp
 struct is_incrementable_r : tick::ops
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(
-        x++,
-        ++x
-    );
+    auto requires_(T&& x) -> tick::valid<
+        decltype(x++),
+        decltype(++x)
+    >;
 };
 ```
 Next, turn it into a trait using `tick::models`:
@@ -246,10 +316,10 @@ struct is_incrementable_r
 : tick::ops, tick::refines<std::is_default_constructible<tick::_>>
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(
-        x++,
-        ++x
-    );
+    auto requires_(T&& x) -> tick::valid<
+        decltype(x++),
+        decltype(++x)
+    >;
 };
 ```
 Notice, the placeholders have to be fully qualified here.
@@ -298,7 +368,7 @@ struct foo<T, TICK_CLASS_REQUIRES(std::is_integral<T>())>
 TICK_MEMBER_REQUIRES
 --------------------
 
-The `TICK_MEMBER_REQUIRES` can be used for member function inside of classes. For example,
+The `TICK_MEMBER_REQUIRES` can be used for member function inside of classes, that are not templated. For example,
 ```cpp
 template<class T>
 struct foo
@@ -325,12 +395,12 @@ TICK_FUNCTION_REQUIRES(is_incrementable<T>())
     x++;
 }
 ```
-Note: The `TICK_REQUIRES` should be preferred.
+Note: The `TICK_REQUIRES` should be preferred. 
 
 Trait checking
 ==============
 
-The `TICK_TRAIT_CHECK` macro will statically assert the list of traits are true but it will show what traits failed including base traits. This can be useful to show more informative messages about why a trait is false.
+The `TICK_TRAIT_CHECK` macro will statically assert the list of traits that are true but it will show what traits failed including base traits. This can be useful to show more informative messages about why a trait is false.
 
 Requirements
 ============
@@ -345,9 +415,15 @@ ZLang support
 $(trait is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> TICK_VALID(
-        x++,
-        ++x
-    );
+    auto requires_(T&& x) -> tick::valid<
+        decltype(x++),
+        decltype(++x)
+    >;
 };
 ```
+Acknowledgments
+===============
+
+* Eric Niebler for the idea of using a `requires` member function to check concept traits.[http://ericniebler.com/2013/11/23/concept-checking-in-c11/]
+* Jamboree for the idea of using a template class to place expressions.[https://github.com/ericniebler/range-v3/issues/29#issuecomment-51016277] 
+
