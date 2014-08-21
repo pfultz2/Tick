@@ -20,6 +20,18 @@ TICK_STATIC_TEST_CASE()
 
 TICK_STATIC_TEST_CASE()
 {
+    template<class T, TICK_REQUIRES(std::is_integral<T>::value)>
+    static std::true_type check_requires(T);
+
+    template<class T, TICK_REQUIRES(!std::is_integral<T>::value)>
+    static std::true_type check_requires(T);
+
+    STATIC_ASSERT_SAME(decltype(check_requires(1)), std::true_type);
+    STATIC_ASSERT_SAME(decltype(check_requires(not_int())), std::true_type);
+};
+
+TICK_STATIC_TEST_CASE()
+{
     template<class T, class... Ts, TICK_REQUIRES(std::is_integral<T>::value)>
     static std::true_type check_vardiac_requires(T, Ts...);
 
@@ -73,14 +85,14 @@ TICK_STATIC_TEST_CASE()
         T x;
 
         TICK_MEMBER_REQUIRES(std::is_integral<T>::value)
-        (std::true_type) foo()
+        std::true_type foo()
         {
             x += 1;
             return std::true_type();
         }
 
         TICK_MEMBER_REQUIRES(!std::is_integral<T>::value)
-        (std::false_type) foo()
+        std::false_type foo()
         {
             return std::false_type();
         }
@@ -98,14 +110,14 @@ TICK_STATIC_TEST_CASE()
         T x;
 
         TICK_MEMBER_REQUIRES(std::is_integral<T>::value)
-        (int) foo()
+        int foo()
         {
             x += 1;
             return x;
         }
 
         TICK_MEMBER_REQUIRES(!std::is_integral<T>::value)
-        (int) foo()
+        int foo()
         {
             return 0;
         }

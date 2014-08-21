@@ -10,18 +10,29 @@
 
 #include <type_traits>
 
-namespace tick {
+namespace tick { namespace detail {
 
-}
+template<long N>
+struct requires_enum
+{
+    enum class type
+    {
+        none,
+        all       
+    };
+};
+
+}}
  
 #define TICK_ERROR_PARENTHESIS_MUST_BE_PLACED_AROUND_THE_RETURN_TYPE(...) __VA_ARGS__>::type
 #define TICK_FUNCTION_REQUIRES(...) typename std::enable_if<(__VA_ARGS__), TICK_ERROR_PARENTHESIS_MUST_BE_PLACED_AROUND_THE_RETURN_TYPE
 
 #define TICK_CLASS_REQUIRES(...) typename std::enable_if<(__VA_ARGS__)>::type
 
-#define TICK_MEMBER_REQUIRES(...) \
-template<class TickMemberBool ## __LINE__=std::true_type> TICK_FUNCTION_REQUIRES((TickMemberBool ## __LINE__::value) && (__VA_ARGS__))
 #define TICK_REQUIRES(...) \
-class TickMemberBool ## __LINE__=std::true_type, class=TICK_CLASS_REQUIRES((TickMemberBool ## __LINE__::value) && (__VA_ARGS__))
+typename tick::detail::requires_enum<__LINE__>::type TickPrivateRequiresEnum ## __LINE__ = tick::detail::requires_enum<__LINE__>::type::none, \
+class=TICK_CLASS_REQUIRES((TickPrivateRequiresEnum ## __LINE__ == tick::detail::requires_enum<__LINE__>::type::none) && (__VA_ARGS__))
+
+#define TICK_MEMBER_REQUIRES(...) template<TICK_REQUIRES(__VA_ARGS__)>
 
 #endif

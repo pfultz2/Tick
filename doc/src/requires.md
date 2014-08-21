@@ -42,7 +42,7 @@ struct foo<T, TICK_CLASS_REQUIRES(std::is_integral<T>())>
 TICK_MEMBER_REQUIRES
 --------------------
 
-The `TICK_MEMBER_REQUIRES` can be used for member function inside of classes. For example,
+The `TICK_MEMBER_REQUIRES` can be used for member function inside of classes, that are not templated. For example,
 ```cpp
 template<class T>
 struct foo
@@ -69,5 +69,5 @@ TICK_FUNCTION_REQUIRES(is_incrementable<T>())
     x++;
 }
 ```
-Note: The `TICK_REQUIRES` should be preferred.
+Note: The `TICK_REQUIRES` should be preferred. 
 
