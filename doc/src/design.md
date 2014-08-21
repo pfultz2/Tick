@@ -112,3 +112,9 @@ Currently, Tick does not support tag-dispatching for overloading functions. That
     static fit::static_<fit::conditional_adaptor<advance_advanceable, advance_incrementable>> advance = {};
 
 So if the `advance_advanceable` function is not callable then it will try to call the `advance_incrementable` function.
+
+Specializations
+---------------
+
+All the traits created can be specialized by the user. This is very important. Since the definition of traits relies on duck typing, there are times that even though it may quack like a duck it is not a duck. So with specialization the user can clarify the type's capabilities.
+
