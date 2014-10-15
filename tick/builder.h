@@ -114,6 +114,10 @@ class ops : public tick::local_placeholders
     struct is_true_ : private_enable_if<T::value> {};
     template<class T> 
     struct is_false_ : private_enable_if<not T::value> {};
+    template<bool V>
+    struct is_true_c_ : private_enable_if<V> {};
+    template<bool V>
+    struct is_false_c_ : private_enable_if<not V> {};
 
 public:
 
@@ -134,6 +138,12 @@ using is_true = typename is_true_<T>::type;
 
 template<class T>
 using is_false = typename is_false_<T>::type; 
+
+template<bool V>
+using is_true_c = typename is_true_c_<V>::type;
+
+template<bool V>
+using is_false_c = typename is_false_c_<V>::type;
 
 #define TICK_HAS_TYPE(...) has_type<__VA_ARGS__>
 #define TICK_IS_TRUE(...) is_true<__VA_ARGS__>
