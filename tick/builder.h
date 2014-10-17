@@ -114,6 +114,10 @@ class ops : public tick::local_placeholders
     struct is_true_ : private_enable_if<T::value> {};
     template<class T> 
     struct is_false_ : private_enable_if<not T::value> {};
+    template<bool V> 
+    struct is_true_c_ : private_enable_if<V> {};
+    template<bool V> 
+    struct is_false_c_ : private_enable_if<not V> {};
 
 public:
 
@@ -135,9 +139,17 @@ using is_true = typename is_true_<T>::type;
 template<class T>
 using is_false = typename is_false_<T>::type; 
 
+template<bool V>
+using is_true_c = typename is_true_c_<V>::type; 
+
+template<bool V>
+using is_false_c = typename is_false_c_<V>::type; 
+
 #define TICK_HAS_TYPE(...) has_type<__VA_ARGS__>
 #define TICK_IS_TRUE(...) is_true<__VA_ARGS__>
 #define TICK_IS_FALSE(...) is_false<__VA_ARGS__>
+#define TICK_IS_TRUE_C(...) is_true_c<__VA_ARGS__>
+#define TICK_IS_FALSE_C(...) is_false_c<__VA_ARGS__>
 #else
 template<class T, class U=void, class Enable=typename has_type_<T, U>::type>
 struct has_type {}; 
@@ -148,9 +160,17 @@ struct is_true {};
 template<class T, class Enable=typename is_false_<T>::type>
 struct is_false {}; 
 
+template<bool V, class Enable=typename is_true_c_<V>::type>
+struct is_true_c {}; 
+
+template<bool V, class Enable=typename is_false_c_<V>::type>
+struct is_false_c {}; 
+
 #define TICK_HAS_TYPE(...) decltype(has_type<__VA_ARGS__>())
 #define TICK_IS_TRUE(...) decltype(is_true<__VA_ARGS__>())
 #define TICK_IS_FALSE(...) decltype(is_false<__VA_ARGS__>())
+#define TICK_IS_TRUE_C(...) decltype(is_true_c<__VA_ARGS__>())
+#define TICK_IS_FALSE_C(...) decltype(is_false_c<__VA_ARGS__>())
 #endif
 
 

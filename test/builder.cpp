@@ -508,6 +508,24 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(is_integer)
     {
         template<class T>
+        auto requires_(T) -> tick::valid<
+            TICK_IS_TRUE_C(std::is_integral<T>::value)
+        >;
+    };
+
+    static_assert(is_integer<int>(), "is_integer predicate failed");
+    static_assert(not is_integer<no_is_integer>(), "is_integer predicate failed");
+};
+
+TICK_STATIC_TEST_CASE()
+{
+
+    struct no_is_integer
+    {};
+
+    TICK_TRAIT(is_integer)
+    {
+        template<class T>
         auto requires_(T) -> decltype(
             is_true<std::is_integral<T>>()
         );
@@ -517,3 +535,92 @@ TICK_STATIC_TEST_CASE()
     static_assert(not is_integer<no_is_integer>(), "is_integer predicate failed");
 };
 
+TICK_STATIC_TEST_CASE()
+{
+
+    struct no_is_integer
+    {};
+
+    TICK_TRAIT(is_integer)
+    {
+        template<class T>
+        auto requires_(T) -> decltype(
+            is_true_c<std::is_integral<T>::value>()
+        );
+
+    };
+    static_assert(is_integer<int>(), "is_integer predicate failed");
+    static_assert(not is_integer<no_is_integer>(), "is_integer predicate failed");
+};
+
+TICK_STATIC_TEST_CASE()
+{
+
+    struct no_is_integer
+    {};
+
+    TICK_TRAIT(is_not_integer)
+    {
+        template<class T>
+        auto requires_(T) -> tick::valid<
+            TICK_IS_FALSE(std::is_integral<T>)
+        >;
+
+    };
+    static_assert(not is_not_integer<int>(), "is_integer predicate failed");
+    static_assert(is_not_integer<no_is_integer>(), "is_integer predicate failed");
+};
+
+TICK_STATIC_TEST_CASE()
+{
+
+    struct no_is_integer
+    {};
+
+    TICK_TRAIT(is_not_integer)
+    {
+        template<class T>
+        auto requires_(T) -> tick::valid<
+            TICK_IS_FALSE_C(std::is_integral<T>::value)
+        >;
+
+    };
+    static_assert(not is_not_integer<int>(), "is_integer predicate failed");
+    static_assert(is_not_integer<no_is_integer>(), "is_integer predicate failed");
+};
+
+TICK_STATIC_TEST_CASE()
+{
+
+    struct no_is_integer
+    {};
+
+    TICK_TRAIT(is_not_integer)
+    {
+        template<class T>
+        auto requires_(T) -> decltype(
+            is_false<std::is_integral<T>>()
+        );
+
+    };
+    static_assert(not is_not_integer<int>(), "is_integer predicate failed");
+    static_assert(is_not_integer<no_is_integer>(), "is_integer predicate failed");
+};
+
+TICK_STATIC_TEST_CASE()
+{
+
+    struct no_is_integer
+    {};
+
+    TICK_TRAIT(is_not_integer)
+    {
+        template<class T>
+        auto requires_(T) -> decltype(
+            is_false_c<std::is_integral<T>::value>()
+        );
+
+    };
+    static_assert(not is_not_integer<int>(), "is_integer predicate failed");
+    static_assert(is_not_integer<no_is_integer>(), "is_integer predicate failed");
+};
