@@ -47,6 +47,7 @@ endmacro(add_test_executable)
 
 add_test_executable(builder)
 add_test_executable(fold)
+add_test_executable(integral_constant)
 add_test_executable(matches)
 add_test_executable(requires)
 add_test_executable(set)
