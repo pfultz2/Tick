@@ -35,6 +35,18 @@ constexpr inline integral_constant<decltype(v op w), (v op w)> \
 operator op(integral_constant<T, v>, integral_constant<U, w>) noexcept \
 { \
     return {}; \
+} \
+template<class T, T v, class U> \
+constexpr inline integral_constant<decltype(v op U::value), (v op U::value)> \
+operator op(integral_constant<T, v>, U) noexcept \
+{ \
+    return {}; \
+} \
+template<class T, T v, class U> \
+constexpr inline integral_constant<decltype(U::value op v), (U::value op v)> \
+operator op(U, integral_constant<T, v>) noexcept \
+{ \
+    return {}; \
 }
 
 #define TICK_INTEGRAL_CONSTANT_UNARY_OP(op) \

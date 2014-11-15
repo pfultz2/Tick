@@ -67,7 +67,14 @@ TICK_STATIC_TEST_CASE()
     static_assert(one_type_xor_two_type::value == (1 ^ 2), "Failed");
     typedef decltype(one_type() | two_type()) one_type_bit_or_two_type;
     static_assert(one_type_bit_or_two_type::value == (1 | 2), "Failed");
-    
-    
 
+};
+
+TICK_STATIC_TEST_CASE()
+{
+    typedef tick::integral_constant<int, 1> one_type;
+    typedef std::integral_constant<int, 1> one_type_std;
+
+    typedef decltype(one_type() == one_type_std()) result_type;
+    static_assert(result_type::value, "Failed");
 };
