@@ -127,3 +127,39 @@ TICK_STATIC_TEST_CASE()
     STATIC_ASSERT_SAME(decltype(check_member_requires<not_int>().foo()), int);
 };
 
+template<class T>
+struct is_integral
+: tick::integral_constant<bool, std::is_integral<T>::value>
+{};
+
+template<class T>
+std::true_type check_param_requires(T, TICK_PARAM_REQUIRES(is_integral<T>()));
+
+template<class T>
+std::false_type check_param_requires(T, TICK_PARAM_REQUIRES(!is_integral<T>()));
+
+TICK_STATIC_TEST_CASE()
+{
+    STATIC_ASSERT_SAME(decltype(check_param_requires(1)), std::true_type);
+    STATIC_ASSERT_SAME(decltype(check_param_requires(not_int())), std::false_type);
+};
+
+TICK_STATIC_TEST_CASE()
+{
+    static const int x = 1;
+    typedef decltype(tick::trait<std::is_integral>(x)) test_type;
+    static_assert(test_type::value, "Trait test failed");
+};
+
+template<class T>
+std::true_type check_param_trait_requires(T x, TICK_PARAM_REQUIRES(tick::trait<std::is_integral>(x)));
+
+template<class T>
+std::false_type check_param_trait_requires(T x, TICK_PARAM_REQUIRES(!tick::trait<std::is_integral>(x)));
+
+TICK_STATIC_TEST_CASE()
+{
+    STATIC_ASSERT_SAME(decltype(check_param_trait_requires(1)), std::true_type);
+    STATIC_ASSERT_SAME(decltype(check_param_trait_requires(not_int())), std::false_type);
+};
+
