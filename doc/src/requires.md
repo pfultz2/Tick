@@ -57,6 +57,25 @@ struct foo
 };
 ```
 
+TICK_PARAM_REQUIRES
+--------------------
+
+The `TICK_PARAM_REQUIRES` can be used in the paramater of the function. This is useful for lambdas:
+```cpp
+auto increment = [](auto& x, TICK_PARAM_REQUIRES(is_incrementable<decltype(x)>()))
+{
+    x++;
+};
+```
+Also, the `trait` function is provided which can be used to deduce the type of the parameters:
+```cpp
+auto increment = [](auto& x, TICK_PARAM_REQUIRES(trait<is_incrementable>(x)))
+{
+    x++;
+};
+```
+Note: The `trait` function always deduces the type without references. So `trait<std::is_lvalue_reference>(x)` will always be false.
+
 TICK_FUNCTION_REQUIRES
 ----------------------
 
