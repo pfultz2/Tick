@@ -5,7 +5,7 @@
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto require(T&& x) -> tick::valid<
+    auto require(T&& x) -> valid<
         decltype(x++)
     >;
 };

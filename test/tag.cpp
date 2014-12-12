@@ -19,7 +19,7 @@
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto require(T&& x) -> tick::valid<
+    auto require(T&& x) -> valid<
         decltype(x++),
         decltype(++x)
     >;
@@ -28,7 +28,7 @@ TICK_TRAIT(is_incrementable)
 TICK_TRAIT(is_decrementable, is_incrementable<_>)
 {
     template<class T>
-    auto require(T&& x) -> tick::valid<
+    auto require(T&& x) -> valid<
         decltype(x--),
         decltype(--x)
     >;
@@ -37,7 +37,7 @@ TICK_TRAIT(is_decrementable, is_incrementable<_>)
 TICK_TRAIT(is_advanceable, is_decrementable<_>)
 {
     template<class T, class Number>
-    auto require(T&& x, Number n) -> tick::valid<
+    auto require(T&& x, Number n) -> valid<
         decltype(x += n)
     >;
 };

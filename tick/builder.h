@@ -100,10 +100,6 @@ template<bool...> struct bool_seq {};
 
 }
 
-template<class...>
-struct valid {};
-
-
 class ops : public tick::local_placeholders
 {
     struct private_type {};
@@ -123,6 +119,9 @@ class ops : public tick::local_placeholders
     struct is_false_c_ : private_enable_if<not V> {};
 
 public:
+
+    template<class...>
+    struct valid {};
 
     template<typename T, typename U>
     static auto returns(U &&) ->

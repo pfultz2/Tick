@@ -4,7 +4,7 @@ Design Notes
 Using template class
 --------------------
 
-Tick uses a the `tick::valid` template class to place valid expressions, because it provides a more robust solution. Ideally, using tick we could define the traits like this:
+Tick uses a the `valid` template class to place valid expressions, because it provides a more robust solution. Ideally, using tick we could define the traits like this:
 
     TICK_TRAIT(is_incrementable)
     {
@@ -51,12 +51,12 @@ However, if one of the expressions returns `void`, then this will fail as well(i
         ));
     };
 
-However, it can be easy to forget to put the `1` in there. So instead we use a `tick::valid` template class, like this:
+However, it can be easy to forget to put the `1` in there. So instead we use a `valid` template class, like this:
 
     TICK_TRAIT(is_incrementable)
     {
         template<class T>
-        auto require(T&& x) -> tick::valid<
+        auto require(T&& x) -> valid<
             decltype(x++),
             decltype(++x)
         >;
