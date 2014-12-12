@@ -1,7 +1,7 @@
 Tag dispatching
 ===============
 
-Tag dispatching allow for functions to be ordered by the refinements defined in the trait. For example, if we try to implement an `advance` function like `std::advance`, using our own traits:
+Tag dispatching allows for functions to be ordered by the refinements defined in the trait. For example, if we try to implement an `advance` function like [`std::advance`](http://en.cppreference.com/w/cpp/iterator/advance). First, we can define the traits for the different traversals:
 
 ```cpp
 TICK_TRAIT(is_incrementable)
@@ -29,6 +29,9 @@ TICK_TRAIT(is_advanceable, is_decrementable<_>)
         decltype(x += n)
     >;
 };
+```
+
+Then we can try to use template constraints for the different overloads:
 
 
 template<class Iterator, TICK_REQUIRES(is_advanceable<Iterator>())>
@@ -55,7 +58,7 @@ void advance(Iterator& it, int n)
 }
 ```
 
-Unfortunately, this leads to ambiguities when we try to use it with iterators to vectors. That is because those iterators are valid for all three overloads. So, tag dispathing allows us to pick the overload that is the most refined. First, we need to call `most_refined` which will retrieve the tags for each each trait. So then `advance` could be implemented like this:
+However, this leads to ambiguities when we try to use it with iterators to vectors. That is because those iterators are valid for all three overloads. So, tag dispatching allows us to pick the overload that is the most refined. First, we need to call `most_refined` which will retrieve the tags for each each trait. So then `advance` could be implemented like this:
 
 ```cpp
 template<class Iterator>
