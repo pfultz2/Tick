@@ -4,15 +4,15 @@
 #include <list>
 #include <vector>
 
-#ifndef TICK_NO_COPY_CONSTRUCTIBLE
+#ifndef TICK_HAS_COPY_CONSTRUCTIBLE_TRAIT
 #   if defined (__GNUC__) && !defined (__clang__)
 #       if __GNUC__ == 4 && __GNUC_MINOR__ < 7
-#           define TICK_NO_COPY_CONSTRUCTIBLE 0
+#           define TICK_HAS_COPY_CONSTRUCTIBLE_TRAIT 0
 #       else
-#           define TICK_NO_COPY_CONSTRUCTIBLE 1
+#           define TICK_HAS_COPY_CONSTRUCTIBLE_TRAIT 1
 #       endif
 #   else
-#   define TICK_NO_COPY_CONSTRUCTIBLE 1
+#   define TICK_HAS_COPY_CONSTRUCTIBLE_TRAIT 1
 #   endif
 #endif
 
@@ -50,7 +50,7 @@ TICK_STATIC_TEST_CASE()
     static_assert(not std::is_same<advanceable_refinements, tick::refines<>>(), "Empty refinements");
 };
 
-
+#if TICK_NO_COPY_CONSTRUCTIBLE
 TICK_STATIC_TEST_CASE()
 {
     static_assert(std::is_base_of<tick::tag<is_decrementable>, tick::tag<is_advanceable>>(), "Not tag base");
@@ -76,6 +76,7 @@ TICK_STATIC_TEST_CASE()
     static_assert(not std::is_base_of<tick::tag<is_decrementable>, tick::most_refined<is_incrementable<int>>>(), "Not tag base");
     static_assert(std::is_base_of<tick::tag<is_incrementable>, tick::most_refined<is_incrementable<int>>>(), "Not tag base");
 };
+#endif
 
 template<class Iterator>
 void advance_impl(Iterator& it, int n, tick::tag<is_advanceable>)
