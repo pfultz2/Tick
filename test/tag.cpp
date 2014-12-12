@@ -19,7 +19,7 @@
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x++),
         decltype(++x)
     >;
@@ -28,7 +28,7 @@ TICK_TRAIT(is_incrementable)
 TICK_TRAIT(is_decrementable, is_incrementable<_>)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x--),
         decltype(--x)
     >;
@@ -37,7 +37,7 @@ TICK_TRAIT(is_decrementable, is_incrementable<_>)
 TICK_TRAIT(is_advanceable, is_decrementable<_>)
 {
     template<class T, class Number>
-    auto requires_(T&& x, Number n) -> tick::valid<
+    auto require(T&& x, Number n) -> tick::valid<
         decltype(x += n)
     >;
 };
@@ -133,7 +133,7 @@ TICK_TEST_CASE()
 TICK_TRAIT(is_integral_incrementable, std::is_integral<_>, std::is_copy_constructible<_>)
 {
     template<class T>
-    auto requires_(T&& x) -> decltype(x++);
+    auto require(T&& x) -> decltype(x++);
 };
 
 TICK_STATIC_TEST_CASE()

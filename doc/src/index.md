@@ -21,7 +21,7 @@ Using Tick we can create an `is_incrementable` trait, like this:
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x++),
         decltype(++x)
     >;
@@ -56,7 +56,7 @@ This gives an error at the call to `increment` rather than inside the function, 
 TICK_TRAIT(is_incrementable, std::is_integral<_>)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x++),
         decltype(++x)
     >;

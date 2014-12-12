@@ -7,7 +7,7 @@ Tag dispatching allows for functions to be ordered by the refinements defined in
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x++),
         decltype(++x)
     >;
@@ -16,7 +16,7 @@ TICK_TRAIT(is_incrementable)
 TICK_TRAIT(is_decrementable, is_incrementable<_>)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x--),
         decltype(--x)
     >;
@@ -25,7 +25,7 @@ TICK_TRAIT(is_decrementable, is_incrementable<_>)
 TICK_TRAIT(is_advanceable, is_decrementable<_>)
 {
     template<class T, class Number>
-    auto requires_(T&& x, Number n) -> tick::valid<
+    auto require(T&& x, Number n) -> tick::valid<
         decltype(x += n)
     >;
 };

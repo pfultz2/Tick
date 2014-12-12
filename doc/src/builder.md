@@ -1,22 +1,22 @@
 Build traits using the TICK_TRAIT macro
 =======================================
 
-This macro will build a boolean type trait for you. Each trait has a `requires_` member function of the form:
+This macro will build a boolean type trait for you. Each trait has a `require` member function of the form:
 ```cpp
 TICK_TRAIT(my_trait)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         ...
     >;
 };
 ```
-The parameters to the trait are based on the parameters passed to the `requires_` function. Then inside the `tick::valid`, all the expressions are placed that will be check for. Each expression in `tick::valid` needs a `decltype` around it. If one of the expressions is not valid, the the trait will return false. For example,
+The parameters to the trait are based on the parameters passed to the `require` function. Then inside the `tick::valid`, all the expressions are placed that will be check for. Each expression in `tick::valid` needs a `decltype` around it. If one of the expressions is not valid, the the trait will return false. For example,
 ```cpp
 TICK_TRAIT(my_trait)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x++)
     >;
 };
@@ -31,7 +31,7 @@ Refinements can be expressed after the name. Each refinement is a [placeholder e
 TICK_TRAIT(is_incrementable, std::is_default_constructible<_>)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x++),
         decltype(++x)
     >;
@@ -46,7 +46,7 @@ TICK_TRAIT(is_equality_comparable,
     std::is_default_constructible<_2>)
 {
     template<class T, class U>
-    auto requires_(T&& x, U&& y) -> tick::valid<
+    auto require(T&& x, U&& y) -> tick::valid<
         decltype(x == y),
         decltype(x != y)
     >;
@@ -73,7 +73,7 @@ The `returns` query can check if the result of the expressions matches the type.
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(returns<int>(x++))
     >;
 };
@@ -85,7 +85,7 @@ Here's an example using placeholder expressions as well:
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(returns<std::is_integral<_>>(x++))
     >;
 };
@@ -97,7 +97,7 @@ Note: The `TICK_RETURNS` macro can be used instead to improve compatability with
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         TICK_RETURNS(x++, int)
     >;
 };
@@ -111,7 +111,7 @@ The `has_type` query can check if a type exist and if the type matches. For exam
 TICK_TRAIT(has_nested_type)
 {
     template<class T>
-    auto requires_(const T& x) -> tick::valid<
+    auto require(const T& x) -> tick::valid<
         has_type<typename T::type>
     >;
 };
@@ -123,7 +123,7 @@ Now `has_type` used as above is not quite as useful since the above example, can
 TICK_TRAIT(has_nested_type)
 {
     template<class T>
-    auto requires_(const T& x) -> tick::valid<
+    auto require(const T& x) -> tick::valid<
         typename T::type
     >;
 };
@@ -133,7 +133,7 @@ So, an optional second parameter can be provided to check if the type matches. H
 TICK_TRAIT(has_nested_int_type)
 {
     template<class T>
-    auto requires_(const T& x) -> tick::valid<
+    auto require(const T& x) -> tick::valid<
         has_type<typename T::type, std::is_integral<_>>
     >;
 };
@@ -145,7 +145,7 @@ Note: For older compilers such as gcc 4.6 the `has_type` has to be used inside o
 TICK_TRAIT(has_nested_int_type)
 {
     template<class T>
-    auto requires_(const T& x) -> tick::valid<
+    auto require(const T& x) -> tick::valid<
         decltype(has_type<typename T::type, std::is_integral<_>>())
     >;
 };
@@ -155,7 +155,7 @@ Also, a `TICK_HAS_TYPE` macro is provided as well, which takes care of wrapping 
 TICK_TRAIT(has_nested_int_type)
 {
     template<class T>
-    auto requires_(const T& x) -> tick::valid<
+    auto require(const T& x) -> tick::valid<
         TICK_HAS_TYPE(typename T::type, std::is_integral<_>>)
     >;
 };
@@ -169,7 +169,7 @@ The `has_template` query can check if a template exist. For example:
 TICK_TRAIT(has_nested_result)
 {
     template<class T>
-    auto requires_(const T& x) -> tick::valid<
+    auto require(const T& x) -> tick::valid<
         has_template<T::template result>
     >;
 };
@@ -184,7 +184,7 @@ The `is_true` and `is_false` queries can check if a trait is true or false. Usin
 TICK_TRAIT(is_2d_array)
 {
     template<class T>
-    auto requires_(const T& x) -> tick::valid<
+    auto require(const T& x) -> tick::valid<
         is_true<std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >
     >;
 };
@@ -195,7 +195,7 @@ Note: For older compilers such as gcc 4.6 the `is_true` has to be used inside of
 TICK_TRAIT(is_2d_array)
 {
     template<class T>
-    auto requires_(const T& x) -> tick::valid<
+    auto require(const T& x) -> tick::valid<
         decltype(is_true<std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >())
     >;
 };
@@ -205,7 +205,7 @@ Also the macros `TICK_IS_TRUE` and `TICK_IS_FALSE` are provided as well,  which 
 TICK_TRAIT(is_2d_array)
 {
     template<class T>
-    auto requires_(const T& x) -> tick::valid<
+    auto require(const T& x) -> tick::valid<
         TICK_IS_TRUE(std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >)
     >;
 };
@@ -214,12 +214,12 @@ TICK_TRAIT(is_2d_array)
 Build traits without macros
 ===========================
 
-The traits can be built using the `TICK_TRAIT` macros. Heres how to build them. First, build a class for the `requires_` functions and inherit from `tick::ops` to bring in all the query operations:
+The traits can be built using the `TICK_TRAIT` macros. Heres how to build them. First, build a class for the `require` functions and inherit from `tick::ops` to bring in all the query operations:
 ```cpp
 struct is_incrementable_r : tick::ops
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x++),
         decltype(++x)
     >;
@@ -242,7 +242,7 @@ struct is_incrementable_r
 : tick::ops, tick::refines<std::is_default_constructible<tick::_>>
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> tick::valid<
         decltype(x++),
         decltype(++x)
     >;

@@ -8,7 +8,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_foo_member)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> tick::valid<
             TICK_RETURNS(x.foo(), int)
         >;
     };
@@ -16,7 +16,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_more_foo_member)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> tick::valid<
             TICK_IS_TRUE(has_foo_member<T>)
         >;
     };
@@ -24,7 +24,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_integral_foo_member)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> tick::valid<
             TICK_RETURNS(x.foo(), std::is_integral<_>)
         >;
     };
@@ -32,7 +32,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_simple_foo_member)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> tick::valid<
             decltype(x.foo())
         >;
     };
@@ -88,7 +88,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_foo_bar_member)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> tick::valid<
             TICK_RETURNS(x.foo(), int),
             TICK_RETURNS(x.bar(), int)
         >;
@@ -97,7 +97,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_more_foo_bar_member)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> tick::valid<
             TICK_IS_TRUE(has_foo_bar_member<T>)
         >;
     };
@@ -105,7 +105,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_integral_foo_bar_member)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> tick::valid<
             TICK_RETURNS(x.foo(), std::is_integral<_>),
             TICK_RETURNS(x.bar(), std::is_integral<_>)
         >;
@@ -114,7 +114,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_simple_foo_bar_member)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> tick::valid<
             decltype(x.foo()),
             decltype(x.bar())
         >;
@@ -204,7 +204,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_funs)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> tick::valid<
             decltype(x.f1()),
             decltype(x.f2()),
             decltype(x.f3())
@@ -274,7 +274,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_nested_type)
     {
         template<class T>
-        auto requires_(T) -> tick::valid<
+        auto require(T) -> tick::valid<
             TICK_HAS_TYPE(typename T::type, int)
         >;
     };
@@ -282,7 +282,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_integral_nested_type)
     {
         template<class T>
-        auto requires_(T) -> tick::valid<
+        auto require(T) -> tick::valid<
             TICK_HAS_TYPE(typename T::type, std::is_integral<_>)
         >;
     };
@@ -290,7 +290,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_simple_nested_type)
     {
         template<class T>
-        auto requires_(T) -> tick::valid<
+        auto require(T) -> tick::valid<
             TICK_HAS_TYPE(typename T::type)
         >;
     };
@@ -349,7 +349,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_nested_type)
     {
         template<class T>
-        auto requires_(T) -> decltype(
+        auto require(T) -> decltype(
             has_type<typename T::type, int>()
         );
     };
@@ -357,7 +357,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_integral_nested_type)
     {
         template<class T>
-        auto requires_(T) -> decltype(
+        auto require(T) -> decltype(
             has_type<typename T::type, std::is_integral<_>>()
         );
     };
@@ -365,7 +365,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_simple_nested_type)
     {
         template<class T>
-        auto requires_(T) -> decltype(
+        auto require(T) -> decltype(
             has_type<typename T::type>()
         );
     };
@@ -440,7 +440,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_nested_template)
     {
         template<class T>
-        auto requires_(T) -> tick::valid<
+        auto require(T) -> tick::valid<
             has_template<T::template template_>
         >;
     };
@@ -471,7 +471,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(has_nested_template)
     {
         template<class T>
-        auto requires_(T) -> decltype(
+        auto require(T) -> decltype(
             has_template<T::template template_>()
         );
     };
@@ -490,7 +490,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(is_integer)
     {
         template<class T>
-        auto requires_(T) -> tick::valid<
+        auto require(T) -> tick::valid<
             TICK_IS_TRUE(std::is_integral<T>)
         >;
     };
@@ -508,7 +508,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(is_integer)
     {
         template<class T>
-        auto requires_(T) -> tick::valid<
+        auto require(T) -> tick::valid<
             TICK_IS_TRUE_C(std::is_integral<T>::value)
         >;
     };
@@ -526,7 +526,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(is_integer)
     {
         template<class T>
-        auto requires_(T) -> decltype(
+        auto require(T) -> decltype(
             is_true<std::is_integral<T>>()
         );
     };
@@ -544,7 +544,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(is_integer)
     {
         template<class T>
-        auto requires_(T) -> decltype(
+        auto require(T) -> decltype(
             is_true_c<std::is_integral<T>::value>()
         );
 
@@ -562,7 +562,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(is_not_integer)
     {
         template<class T>
-        auto requires_(T) -> tick::valid<
+        auto require(T) -> tick::valid<
             TICK_IS_FALSE(std::is_integral<T>)
         >;
 
@@ -580,7 +580,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(is_not_integer)
     {
         template<class T>
-        auto requires_(T) -> tick::valid<
+        auto require(T) -> tick::valid<
             TICK_IS_FALSE_C(std::is_integral<T>::value)
         >;
 
@@ -598,7 +598,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(is_not_integer)
     {
         template<class T>
-        auto requires_(T) -> decltype(
+        auto require(T) -> decltype(
             is_false<std::is_integral<T>>()
         );
 
@@ -616,7 +616,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT(is_not_integer)
     {
         template<class T>
-        auto requires_(T) -> decltype(
+        auto require(T) -> decltype(
             is_false_c<std::is_integral<T>::value>()
         );
 

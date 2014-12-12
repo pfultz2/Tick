@@ -81,7 +81,7 @@ int valid_expr(T &&);
 struct base_requires
 {
     template<class... Ts>
-    int requires_(Ts&&...);
+    int require(Ts&&...);
 };
 
 template<class T>
@@ -253,7 +253,7 @@ struct models<Trait(detail::no_check)>
 // TODO: Add axioms
 template<class Trait, class... Ts>
 struct models<Trait(Ts...), typename detail::holder<
-    decltype(std::declval<Trait>().requires_(std::declval<Ts>()...))
+    decltype(std::declval<Trait>().require(std::declval<Ts>()...))
 >::type>
 : refine_traits<Trait>::template apply<Ts...>
 {};
