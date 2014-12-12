@@ -28,6 +28,9 @@
 namespace tick {
 
 namespace detail {
+
+struct no_check {};
+
 template<class T1 = void, class T2 = void, class T3 = void, class T4 = void, class T5 = void>
 struct holder
 {
@@ -194,6 +197,7 @@ struct base_traits
 template<class... Lambdas>
 struct refines
 {
+    typedef refines<Lambdas...> tick_trait_refinements;
     template<class... Ts>
     struct tick_trait_base_apply
     : base_traits<typename tick::detail::replace_args<Lambdas, Ts...>::type...>
@@ -240,6 +244,12 @@ template<class Trait, class X = void>
 struct models 
 : std::false_type
 {};
+
+template<class Trait>
+struct models<Trait(detail::no_check)>
+{
+    typedef Trait type;
+};
 // TODO: Add axioms
 template<class Trait, class... Ts>
 struct models<Trait(Ts...), typename detail::holder<
