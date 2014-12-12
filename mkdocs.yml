@@ -8,6 +8,7 @@ pages:
 - ['builder.md', 'User Guide', 'Creating a Trait']
 - ['requires.md', 'User Guide', 'Template constraints']
 - ['check.md', 'User Guide', 'Checking a Trait']
+- ['tag.md', 'User Guide', 'Tag dispacthing']
 - ['requirements.md', 'About', 'Requirements']
 - ['acknowledgments.md', 'About', 'Acknowledgments']
 - ['design.md', 'About', 'Design Notes']
