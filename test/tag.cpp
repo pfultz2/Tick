@@ -4,6 +4,18 @@
 #include <list>
 #include <vector>
 
+#ifndef TICK_NO_COPY_CONSTRUCTIBLE
+#   if defined (__GNUC__) && !defined (__clang__)
+#       if __GNUC__ == 4 && __GNUC_MINOR__ < 7
+#           define TICK_NO_COPY_CONSTRUCTIBLE 0
+#       else
+#           define TICK_NO_COPY_CONSTRUCTIBLE 1
+#       endif
+#   else
+#   define TICK_NO_COPY_CONSTRUCTIBLE 1
+#   endif
+#endif
+
 TICK_TRAIT(is_incrementable)
 {
     template<class T>
