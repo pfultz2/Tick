@@ -33,7 +33,7 @@ TICK_TRAIT(is_advanceable, is_decrementable<_>)
 
 Then we can try to use template constraints for the different overloads:
 
-
+```cpp
 template<class Iterator, TICK_REQUIRES(is_advanceable<Iterator>())>
 void advance(Iterator& it, int n)
 {
