@@ -119,3 +119,25 @@ TICK_TEST_CASE()
 }
 
 
+TICK_TRAIT(is_integral_incrementable, std::is_integral<_>, std::is_copy_constructible<_>)
+{
+    template<class T>
+    auto requires_(T&& x) -> decltype(x++);
+};
+
+TICK_STATIC_TEST_CASE()
+{
+    static_assert(std::is_base_of<tick::tag<is_integral_incrementable>, tick::tag<is_integral_incrementable>>(), "Not tag base");
+    static_assert(std::is_base_of<tick::tag<std::is_integral>, tick::tag<is_integral_incrementable>>(), "Not tag base");
+    static_assert(std::is_base_of<tick::tag<std::is_copy_constructible>, tick::tag<is_integral_incrementable>>(), "Not tag base");
+
+    static_assert(std::is_base_of<tick::tag<is_integral_incrementable>, tick::most_refined<is_integral_incrementable<int>>>(), "Not tag base");
+    static_assert(std::is_base_of<tick::tag<std::is_integral>, tick::most_refined<is_integral_incrementable<int>>>(), "Not tag base");
+    static_assert(std::is_base_of<tick::tag<std::is_copy_constructible>, tick::most_refined<is_integral_incrementable<int>>>(), "Not tag base");
+
+    static_assert(not std::is_base_of<tick::tag<is_integral_incrementable>, tick::most_refined<is_integral_incrementable<float>>>(), "Not tag base");
+    static_assert(not std::is_base_of<tick::tag<std::is_integral>, tick::most_refined<is_integral_incrementable<float>>>(), "Not tag base");
+    static_assert(std::is_base_of<tick::tag<std::is_copy_constructible>, tick::most_refined<is_integral_incrementable<int>>>(), "Not tag base");
+};
+
+
