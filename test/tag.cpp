@@ -50,7 +50,6 @@ TICK_STATIC_TEST_CASE()
     static_assert(not std::is_same<advanceable_refinements, tick::refines<>>(), "Empty refinements");
 };
 
-#if TICK_NO_COPY_CONSTRUCTIBLE
 TICK_STATIC_TEST_CASE()
 {
     static_assert(std::is_base_of<tick::tag<is_decrementable>, tick::tag<is_advanceable>>(), "Not tag base");
@@ -76,7 +75,6 @@ TICK_STATIC_TEST_CASE()
     static_assert(not std::is_base_of<tick::tag<is_decrementable>, tick::most_refined<is_incrementable<int>>>(), "Not tag base");
     static_assert(std::is_base_of<tick::tag<is_incrementable>, tick::most_refined<is_incrementable<int>>>(), "Not tag base");
 };
-#endif
 
 template<class Iterator>
 void advance_impl(Iterator& it, int n, tick::tag<is_advanceable>)
@@ -131,7 +129,7 @@ TICK_TEST_CASE()
     TICK_TEST_CHECK(*iterator == 5);
 }
 
-
+#if TICK_HAS_COPY_CONSTRUCTIBLE_TRAIT
 TICK_TRAIT(is_integral_incrementable, std::is_integral<_>, std::is_copy_constructible<_>)
 {
     template<class T>
@@ -152,5 +150,5 @@ TICK_STATIC_TEST_CASE()
     static_assert(not std::is_base_of<tick::tag<std::is_integral>, tick::most_refined<is_integral_incrementable<float>>>(), "Not tag base");
     static_assert(std::is_base_of<tick::tag<std::is_copy_constructible>, tick::most_refined<is_integral_incrementable<int>>>(), "Not tag base");
 };
-
+#endif
 
