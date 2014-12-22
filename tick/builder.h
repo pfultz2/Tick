@@ -98,6 +98,55 @@ struct return_matches
 
 template<bool...> struct bool_seq {};
 
+template<class... Traits>
+struct base_traits
+: tick::integral_constant<bool, 
+    std::is_same<
+        detail::bool_seq<Traits::value...>, 
+        detail::bool_seq<(Traits::value, true)...>
+    >::type::value
+>
+{
+    typedef base_traits<Traits...> base_traits_type;
+};
+
+template<class T, class Enable=void>
+struct refine_traits
+{
+    template<class... Ts>
+    struct apply
+    : base_traits<>
+    {
+    };
+};
+
+template<class T>
+struct refine_traits<T, typename detail::template_holder<T::template tick_trait_base_apply>::type>
+{
+    template<class... Ts>
+    struct apply
+    : T::template tick_trait_base_apply<Ts...>
+    {
+
+    };
+};
+
+struct any
+{
+    any()
+    {}
+    template<typename T>
+    any(T &&)
+    {}
+};
+
+template<typename...Ts>
+auto models_(any) -> false_type;
+
+template<typename...Ts, typename Trait,
+    typename = decltype(std::declval<Trait>().template require<Ts...>(std::declval<Ts>()...))>
+auto models_(Trait &&) -> typename refine_traits<Trait>::template apply<Ts...>;
+
 }
 
 class ops : public tick::local_placeholders
@@ -181,54 +230,21 @@ struct is_false_c {};
 
 };
 
-template<class... Traits>
-struct base_traits
-: tick::integral_constant<bool, 
-    std::is_same<
-        detail::bool_seq<Traits::value...>, 
-        detail::bool_seq<(Traits::value, true)...>
-    >::type::value
->
-{
-    typedef base_traits<Traits...> base_traits_type;
-};
-
 template<class... Lambdas>
 struct refines
 {
     typedef refines<Lambdas...> tick_trait_refinements;
     template<class... Ts>
     struct tick_trait_base_apply
-    : base_traits<typename tick::detail::replace_args<Lambdas, Ts...>::type...>
+    : detail::base_traits<typename tick::detail::replace_args<Lambdas, Ts...>::type...>
     {
-    };
-};
-
-template<class T, class Enable=void>
-struct refine_traits
-{
-    template<class... Ts>
-    struct apply
-    : base_traits<>
-    {
-    };
-};
-
-template<class T>
-struct refine_traits<T, typename detail::template_holder<T::template tick_trait_base_apply>::type>
-{
-    template<class... Ts>
-    struct apply
-    : T::template tick_trait_base_apply<Ts...>
-    {
-
     };
 };
 
 template<class T, class Enable = void>
 struct base_traits_type
 {
-    typedef base_traits<> type;
+    typedef detail::base_traits<> type;
 };
 
 template<class T>
@@ -239,23 +255,16 @@ struct base_traits_type<T, typename detail::holder<
     typedef typename T::base_traits_type type;
 };
 
-template<class Trait, class X = void>
+template<class Trait, class... Ts>
 struct models 
-: std::false_type
+: decltype(detail::models_<Ts...>(std::declval<Trait>()))
 {};
 
 template<class Trait>
-struct models<Trait(detail::no_check)>
+struct models<Trait, detail::no_check>
 {
     typedef Trait type;
 };
-// TODO: Add axioms
-template<class Trait, class... Ts>
-struct models<Trait(Ts...), typename detail::holder<
-    decltype(std::declval<Trait>().require(std::declval<Ts>()...))
->::type>
-: refine_traits<Trait>::template apply<Ts...>
-{};
 
 #define TICK_TRAIT_REFINES(name, ...) \
 struct tick_private_trait_base_ ## name : tick::ops \
@@ -263,7 +272,7 @@ struct tick_private_trait_base_ ## name : tick::ops \
 struct tick_private_trait_ ## name; \
 template<class... T> \
 struct name \
-: tick::models<tick_private_trait_ ## name(T...)> \
+: tick::models<tick_private_trait_ ## name, T...> \
 {}; \
 struct tick_private_trait_ ## name \
 : tick::detail::base_requires, tick::ops, tick_private_trait_base_ ## name::type

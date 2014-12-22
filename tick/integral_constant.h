@@ -81,6 +81,9 @@ TICK_INTEGRAL_CONSTANT_UNARY_OP(~)
 TICK_INTEGRAL_CONSTANT_UNARY_OP(+)
 TICK_INTEGRAL_CONSTANT_UNARY_OP(-)
 
+typedef integral_constant<bool, true> true_type;
+typedef integral_constant<bool, false> false_type;
+
 }
 
 #endif
