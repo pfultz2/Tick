@@ -67,6 +67,7 @@ TICK_STATIC_TEST_CASE()
     template<template<class...> class HasFoo, bool IsSimple>
     struct test_foo_member
     {
+        typedef decltype(HasFoo<foo_member>()) check_has_foo_member;
         static_assert(HasFoo<foo_member>(), "No foo member");
         static_assert(HasFoo<long_foo_member>(), "No foo member");
         static_assert(not HasFoo<no_foo_member>(), "Foo member found");
