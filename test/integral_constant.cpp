@@ -5,9 +5,13 @@
 
 TICK_STATIC_TEST_CASE()
 {
-    typedef tick::integral_constant<bool, true> true_type;
+    struct true_type
+    : tick::integral_constant<bool, true>
+    {};
     static_assert(true_type(), "Failed");
-    typedef tick::integral_constant<bool, false> false_type;
+    struct false_type
+    : tick::integral_constant<bool, false>
+    {};
     static_assert(!false_type(), "Failed");
 
     typedef tick::integral_constant<int, 1> one_type;

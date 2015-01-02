@@ -13,9 +13,13 @@
 
 namespace tick {
 
+namespace detail {
+struct integral_constant_base {};
+}
+
 template<class T, T v>
 struct integral_constant
-: std::integral_constant<T, v>
+: std::integral_constant<T, v>, detail::integral_constant_base
 {
     constexpr integral_constant()
     {}
@@ -36,13 +40,13 @@ operator op(integral_constant<T, v>, integral_constant<U, w>) noexcept \
 { \
     return {}; \
 } \
-template<class T, T v, class U> \
+template<class T, T v, class U, class=typename std::enable_if<!std::is_base_of<detail::integral_constant_base, U>::value>::type> \
 constexpr inline integral_constant<decltype(v op U::value), (v op U::value)> \
 operator op(integral_constant<T, v>, U) noexcept \
 { \
     return {}; \
 } \
-template<class T, T v, class U> \
+template<class T, T v, class U, class=typename std::enable_if<!std::is_base_of<detail::integral_constant_base, U>::value>::type> \
 constexpr inline integral_constant<decltype(U::value op v), (U::value op v)> \
 operator op(U, integral_constant<T, v>) noexcept \
 { \
