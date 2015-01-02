@@ -1,0 +1,304 @@
+/*=============================================================================
+    Copyright (c) 2014 Paul Fultz II
+    traits.h
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+==============================================================================*/
+
+#ifndef TICK_GUARD_TRAITS_H
+#define TICK_GUARD_TRAITS_H
+
+#include <tick/builder.h>
+#include <tick/requires.h>
+#include <iterator>
+
+namespace tick_adl {
+
+using std::swap;
+using std::begin;
+using std::end;
+
+template<class T, class U>
+auto swap(T&& x, U&& y) -> decltype(swap(std::forward<T>(x), std::forward<U>(y)));
+
+template<class T>
+auto begin(T&& x) -> decltype(begin(std::forward<T>(x)));
+
+template<class T>
+auto end(T&& x) -> decltype(end(std::forward<T>(x)));
+
+}
+
+namespace tick {
+
+template<class T>
+struct bare
+: std::remove_cv<typename std::remove_reference<T>::type>
+{};
+
+#if TICK_HAS_TEMPLATE_ALIAS
+
+template<class T>
+using bare_t = typename bare<T>::type;
+
+#endif
+
+using std::is_default_constructible;
+using std::is_copy_constructible;
+using std::is_copy_assignable;
+using std::is_move_constructible;
+using std::is_move_assignable;
+using std::is_destructible;
+
+// using std::is_trivially_copyable;
+using std::is_trivial;
+using std::is_standard_layout;
+using std::is_pod;
+
+TICK_TRAIT(is_equality_comparable)
+{
+    template<class T>
+    auto require(T&& x) -> valid<
+        TICK_RETURNS(x == x, bool),
+        TICK_RETURNS(x != x, bool)
+    >;
+
+    template<class T, class U>
+    auto require(T&& x, U&& y) -> valid<
+        decltype(require(std::forward<T>(x))),
+        decltype(require(std::forward<U>(y))),
+        TICK_RETURNS(x == y, bool),
+        TICK_RETURNS(x != y, bool),
+        TICK_RETURNS(y == x, bool),
+        TICK_RETURNS(y != x, bool)
+    >;
+};
+
+TICK_TRAIT(is_less_than_comparable)
+{
+    template<class T>
+    auto require(T&& x) -> valid<
+        TICK_RETURNS(x < x, bool)
+    >;
+
+    template<class T, class U>
+    auto require(T&& x, U&& y) -> valid<
+        TICK_RETURNS(x < x, bool),
+        TICK_RETURNS(y < y, bool),
+        TICK_RETURNS(x < y, bool),
+        TICK_RETURNS(y < x, bool)
+    >;
+};
+
+TICK_TRAIT(is_weakly_ordered)
+{
+    template<class T>
+    auto require(T&& x) -> valid<
+        TICK_RETURNS(x < x, bool),
+        TICK_RETURNS(x > x, bool),
+        TICK_RETURNS(x <= x, bool),
+        TICK_RETURNS(x >= x, bool)
+    >;
+
+    template<class T, class U>
+    auto require(T&& x, U&& y) -> valid<
+        decltype(require(std::forward<T>(x))),
+        decltype(require(std::forward<U>(y))),
+        TICK_RETURNS(x < y, bool),
+        TICK_RETURNS(y < x, bool),
+
+        TICK_RETURNS(x > y, bool),
+        TICK_RETURNS(y > x, bool),
+
+        TICK_RETURNS(x <= y, bool),
+        TICK_RETURNS(y <= x, bool),
+
+        TICK_RETURNS(x >= y, bool),
+        TICK_RETURNS(y >= x, bool)
+    >;
+};
+
+// TODO: Use refinements instead
+template<class... Ts>
+struct is_totally_ordered
+: integral_constant<bool, (is_weakly_ordered<Ts...>() and is_equality_comparable<Ts...>())>
+{};
+
+TICK_TRAIT(is_swappable)
+{
+    template<class T>
+    auto require(T&& x) -> valid<
+        decltype(tick_adl::swap(x, x))
+    >;
+};
+
+TICK_TRAIT(is_nullable_pointer,
+    is_equality_comparable<_>,
+    is_default_constructible<_>,
+    is_copy_constructible<_>,
+    is_copy_assignable<_>,
+    is_destructible<_>,
+    std::is_constructible<_, std::nullptr_t>,
+    is_equality_comparable<_, std::nullptr_t>
+)
+{};
+
+// TODO: Function
+
+TICK_TRAIT(is_predicate)
+{
+    template<class F, class... Ts>
+    auto require(F&& f, Ts&&... xs) -> valid<
+        TICK_RETURNS(f(std::forward<Ts>(xs)...), bool)
+    >;
+};
+
+TICK_TRAIT(is_compare)
+{
+    template<class F, class T>
+    auto require(F&& f, T&& x) -> valid<
+        TICK_RETURNS(f(std::forward<T>(x), std::forward<T>(x)), bool)
+    >;
+
+    template<class F, class T, class U>
+    auto require(F&& f, T&& x, U&& y) -> valid<
+        decltype(require(std::forward<T>(x))),
+        decltype(require(std::forward<U>(y))),
+        TICK_RETURNS(f(std::forward<T>(x), std::forward<U>(y)), bool),
+        TICK_RETURNS(f(std::forward<U>(y), std::forward<T>(x)), bool)
+    >;
+};
+
+namespace detail {
+
+// A trait to detect iterator traits, since it is not SFINAE friendly
+TICK_TRAIT(has_iterator_traits)
+{
+    template<class T,class Iterator=typename bare<T>::type>
+    auto require(T&&) -> valid<
+        typename Iterator::difference_type,
+        typename Iterator::value_type,
+        typename Iterator::pointer,
+        typename Iterator::reference,
+        typename Iterator::iterator_category
+    >;
+};
+
+template<class T>
+struct has_iterator_traits<T*>
+: true_type
+{};
+
+}
+
+template<class T, class=void>
+struct iterator_traits;
+
+template<class T>
+struct iterator_traits<T, TICK_CLASS_REQUIRES(detail::has_iterator_traits<T>())>
+: std::iterator_traits<typename bare<T>::type>
+{};
+
+TICK_TRAIT(is_iterator,
+    is_copy_constructible<_>,
+    is_copy_assignable<_>,
+    is_destructible<_>,
+    is_swappable<_>
+)
+{
+    template<class I>
+    auto require(I&& i) -> valid<
+        // TICK_RETURNS(*i, std::is_same<_, typename iterator_traits<I>::reference>),
+        TICK_RETURNS(*i, typename iterator_traits<I>::reference),
+        TICK_RETURNS(++i, typename std::add_lvalue_reference<I>::type)
+    >;
+};
+
+TICK_TRAIT(is_input_iterator, is_iterator<_>, is_equality_comparable<_>)
+{
+    template<class I>
+    auto require(I&& i) -> valid<
+        TICK_RETURNS(*i, typename iterator_traits<I>::value_type),
+        TICK_RETURNS(*i++, typename iterator_traits<I>::value_type)
+    >;
+};
+
+TICK_TRAIT(is_output_iterator, is_iterator<_>)
+{
+    template<class I, class T>
+    auto require(I&& i, T&& x) -> valid<
+        decltype(*i = x),
+        decltype(*i++ = x),
+        TICK_RETURNS(++i, typename std::add_const<typename std::add_lvalue_reference<I>::type>::type)
+    >;
+
+    template<class I>
+    auto require(I&& i) -> valid<
+        decltype(require(std::forward<I>(i), std::declval<typename iterator_traits<I>::value_type>()))
+    >;
+};
+
+TICK_TRAIT(is_forward_iterator, is_input_iterator<_>, is_default_constructible<_>)
+{
+    template<class I>
+    auto require(I&& i) -> valid<
+        TICK_RETURNS(++i, typename std::add_lvalue_reference<I>::type),
+        TICK_RETURNS(i++, I),
+        TICK_IS_TRUE(std::is_reference<typename iterator_traits<I>::reference>),
+        // TICK_RETURNS(*i, typename iterator_traits<I>::value_type&),
+        TICK_RETURNS(*i++, typename iterator_traits<I>::reference)
+    >;
+};
+
+TICK_TRAIT(is_mutable_forward_iterator, is_forward_iterator<_>, is_output_iterator<_>)
+{};
+
+TICK_TRAIT(is_bidirectional_iterator, is_forward_iterator<_>)
+{
+    template<class I>
+    auto require(I&& i) -> valid<
+        TICK_RETURNS(--i, typename std::add_lvalue_reference<I>::type),
+        TICK_RETURNS(i--, I),
+        TICK_RETURNS(*i--, typename iterator_traits<I>::reference)
+    >;
+};
+
+TICK_TRAIT(is_mutable_bidirectional_iterator, is_bidirectional_iterator<_>, is_output_iterator<_>)
+{};
+
+TICK_TRAIT(is_random_access_iterator, is_bidirectional_iterator<_>, is_totally_ordered<_>)
+{
+    template<class I, class Number>
+    auto require(I&& i, Number n) -> valid<
+        TICK_RETURNS(i += n, typename std::add_lvalue_reference<I>::type),
+        TICK_RETURNS(i -= n, typename std::add_lvalue_reference<I>::type),
+        TICK_RETURNS(i + n, I),
+        TICK_RETURNS(i - n, I),
+        TICK_RETURNS(n + i, I),
+        TICK_RETURNS(i - i, typename iterator_traits<I>::difference_type),
+        TICK_RETURNS(i[n], typename iterator_traits<I>::reference),
+        TICK_RETURNS(*(i + n), typename iterator_traits<I>::reference)
+    >;
+
+    template<class I>
+    auto require(I&& i) -> valid<
+        decltype(require(std::forward<I>(i), 0))
+    >;
+};
+
+TICK_TRAIT(is_mutable_random_access_iterator, is_random_access_iterator<_>, is_output_iterator<_>)
+{};
+
+TICK_TRAIT(is_value_swappable, is_iterator<_>)
+{
+    template<class T>
+    auto require(T&&) -> valid<
+        TICK_IS_TRUE(is_swappable<typename iterator_traits<T>::value_type>)
+    >;
+};
+
+
+}
+
+
+#endif
