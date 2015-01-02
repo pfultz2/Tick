@@ -70,24 +70,6 @@ struct avoid
 >
 {};
 
-template<class T>
-struct is_void
-: std::is_same<T, void>
-{};
-
-template<class T>
-struct is_void<std::is_same<T, void>>
-: std::true_type
-{};
-
-template<class T>
-struct is_void<std::is_same<void, T>>
-: std::true_type
-{};
-
-template<typename T>
-int valid_expr(T &&);
-
 struct base_requires
 {
     template<class... Ts>
@@ -103,7 +85,6 @@ template<class T, class U>
 struct return_matches
 : detail::matches<typename detail::avoid<U>::type,T>
 {
-    static_assert(!detail::is_void<T>::value, "Void can't be used for returns");
 };
 
 template<bool...> struct bool_seq {};
