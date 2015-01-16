@@ -633,3 +633,28 @@ TICK_STATIC_TEST_CASE()
     static_assert(not is_not_integer<int>(), "is_integer predicate failed");
     static_assert(is_not_integer<no_is_integer>(), "is_integer predicate failed");
 };
+
+TICK_STATIC_TEST_CASE()
+{
+    struct no_is_integer
+    {};
+
+    TICK_TRAIT(is_integer, std::is_integral<_>)
+    {};
+
+    static_assert(is_integer<int>(), "is_integer refinement failed");
+    static_assert(not is_integer<no_is_integer>(), "is_integer refinement failed");
+};
+
+TICK_STATIC_TEST_CASE()
+{
+    struct no_is_integer
+    {};
+
+    TICK_TRAIT(is_integer, quote<std::is_integral>)
+    {};
+
+    static_assert(is_integer<int>(), "is_integer refinement failed");
+    static_assert(not is_integer<no_is_integer>(), "is_integer refinement failed");
+};
+

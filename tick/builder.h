@@ -274,7 +274,7 @@ struct models<Trait, detail::no_check>
 };
 
 #define TICK_TRAIT_REFINES(name, ...) \
-struct tick_private_trait_base_ ## name : tick::ops \
+struct tick_private_trait_base_ ## name : tick::ops, tick::local_quote \
 { typedef tick::refines<__VA_ARGS__> type; }; \
 struct tick_private_trait_ ## name; \
 template<class... T> \

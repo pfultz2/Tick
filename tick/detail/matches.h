@@ -14,13 +14,23 @@
 namespace tick { namespace detail {
 
 template<class Tuple>
-struct tuple_replace
+struct tuple_replace;
+
+template<class... Ts>
+struct tuple_replace<std::tuple<Ts...>>
 {
+    typedef std::tuple<Ts...> Tuple;
     template<class Placeholder>
     struct apply
     : std::tuple_element<Placeholder::value - 1, Tuple>
     {
         static_assert(Placeholder::value <= std::tuple_size<Tuple>::value, "Invalid placeholder");
+    };
+
+    template<template<class...> class Template>
+    struct quote
+    {
+        typedef Template<Ts...> type;
     };
 };
 
@@ -32,6 +42,12 @@ struct single_replace
     {
         static_assert(Placeholder::value == 1, "Invalid placeholder");
         typedef T type;
+    };
+
+    template<template<class...> class Template>
+    struct quote
+    {
+        typedef Template<T> type;
     };
 };
 
@@ -50,6 +66,18 @@ template<template<class...> class F, class Replacer, class... Args>
 struct replace_args_recursive<F<Args...>, Replacer>
 {
     typedef F<typename replace_args_recursive<Args, Replacer>::type...> type;
+};
+
+template<template<class...> class F, class Replacer>
+struct replace_args_recursive<quote<F>, Replacer>
+{
+    typedef typename Replacer::template quote<F>::type type;
+};
+
+template<template<class...> class F, class Replacer>
+struct replace_args_recursive<local_quote::quote<F>, Replacer>
+{
+    typedef typename Replacer::template quote<F>::type type;
 };
 
 template<class F, class Replacer>

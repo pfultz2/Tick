@@ -17,6 +17,10 @@ TICK_TEST_CASE()
         replace_args_test<long>);
     STATIC_ASSERT_SAME(typename tick::detail::replace_args<replace_args_test<tick::_1, tick::_2>, long, float>::type, 
         replace_args_test<long, float>);
+    STATIC_ASSERT_SAME(typename tick::detail::replace_args<tick::quote<replace_args_test>, long>::type, 
+        replace_args_test<long>);
+    STATIC_ASSERT_SAME(typename tick::detail::replace_args<tick::local_quote::quote<replace_args_test>, long>::type, 
+        replace_args_test<long>);
 }
 
 TICK_TEST_CASE()

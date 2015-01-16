@@ -12,6 +12,23 @@
 
 namespace tick {
 
+template<template<class...> class F>
+struct quote 
+{
+    template<class... Ts>
+    struct apply
+    : F<Ts...>
+    {};
+};
+
+struct local_quote
+{
+    template<template<class...> class F>
+    struct quote 
+    : tick::quote<F>
+    {};
+};
+
 template<int N>
 struct arg : tick::integral_constant<int, N>
 {};
