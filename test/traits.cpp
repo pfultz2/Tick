@@ -45,3 +45,17 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT_CHECK(tick::is_value_swappable<std::list<int>::iterator>);
 };
 
+TICK_STATIC_TEST_CASE()
+{
+    TICK_TRAIT_CHECK(tick::is_range<std::vector<int>>);
+    TICK_TRAIT_CHECK(tick::is_range<std::list<int>>);
+    TICK_TRAIT_CHECK(tick::is_range<std::set<int>>);
+    TICK_TRAIT_CHECK(tick::is_range<std::map<int, int>>);
+
+
+    TICK_TRAIT_CHECK(tick::is_container<std::vector<int>>);
+    TICK_TRAIT_CHECK(tick::is_container<std::list<int>>);
+    TICK_TRAIT_CHECK(tick::is_container<std::set<int>>);
+    TICK_TRAIT_CHECK(tick::is_container<std::map<int, int>>);
+};
+

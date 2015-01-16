@@ -297,6 +297,40 @@ TICK_TRAIT(is_value_swappable, is_iterator<_>)
     >;
 };
 
+TICK_TRAIT(is_range)
+{
+    template<class T>
+    auto require(T&& x) -> valid<
+        TICK_RETURNS(tick_adl::begin(std::forward<T>(x)), is_iterator<_>),
+        TICK_RETURNS(tick_adl::end(std::forward<T>(x)), is_iterator<_>)
+    >;
+};
+
+// TODO: Add CopyInsertable
+TICK_TRAIT(is_container,
+    is_equality_comparable<_>,
+    is_default_constructible<_>,
+    is_copy_constructible<_>,
+    is_copy_assignable<_>,
+    is_destructible<_>,
+    is_swappable<_>,
+    is_range<_>
+)
+{
+    template<class T>
+    auto require(const T& x) -> valid<
+        TICK_HAS_TYPE(T::value_type),
+        TICK_HAS_TYPE(T::reference, std::is_lvalue_reference<_>),
+        // TODO: Check for constness as well
+        TICK_HAS_TYPE(T::const_reference, std::is_lvalue_reference<_>),
+        TICK_HAS_TYPE(T::difference_type),
+        TICK_HAS_TYPE(T::size_type),
+        TICK_RETURNS(x.size(), typename T::size_type),
+        TICK_RETURNS(x.max_size(), typename T::size_type),
+        TICK_RETURNS(x.empty(), bool)
+    >;
+};
+
 
 }
 
