@@ -156,7 +156,7 @@ TICK_TRAIT(has_nested_int_type)
 {
     template<class T>
     auto require(const T& x) -> valid<
-        TICK_HAS_TYPE(typename T::type, std::is_integral<_>>)
+        TICK_HAS_TYPE(T::type, std::is_integral<_>>)
     >;
 };
 ```

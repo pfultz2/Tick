@@ -284,7 +284,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_HAS_TYPE(typename T::type, int)
+            TICK_HAS_TYPE(T::type, int)
         >;
     };
 
@@ -292,7 +292,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_HAS_TYPE(typename T::type, std::is_integral<_>)
+            TICK_HAS_TYPE(T::type, std::is_integral<_>)
         >;
     };
 
@@ -300,7 +300,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_HAS_TYPE(typename T::type)
+            TICK_HAS_TYPE(T::type)
         >;
     };
 
