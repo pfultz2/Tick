@@ -118,10 +118,10 @@ TICK_TRAIT(is_weakly_ordered)
     >;
 };
 
-// TODO: Use refinements instead
-template<class... Ts>
-struct is_totally_ordered
-: integral_constant<bool, (is_weakly_ordered<Ts...>() and is_equality_comparable<Ts...>())>
+TICK_TRAIT(is_totally_ordered,
+    quote<is_weakly_ordered>,
+    quote<is_equality_comparable>
+)
 {};
 
 TICK_TRAIT(is_swappable)
@@ -286,7 +286,7 @@ TICK_TRAIT(is_random_access_iterator, is_bidirectional_iterator<_>, is_totally_o
     >;
 };
 
-TICK_TRAIT(is_mutable_random_access_iterator, is_random_access_iterator<_>, is_output_iterator<_>)
+TICK_TRAIT(is_mutable_random_access_iterator, quote<is_random_access_iterator>, is_output_iterator<_>)
 {};
 
 TICK_TRAIT(is_value_swappable, is_iterator<_>)
