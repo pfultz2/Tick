@@ -319,15 +319,31 @@ TICK_TRAIT(is_container,
 {
     template<class T>
     auto require(const T& x) -> valid<
+        TICK_HAS_TYPE(T::iterator, is_iterator<_>),
+        TICK_HAS_TYPE(T::const_iterator, is_iterator<_>),
         TICK_HAS_TYPE(T::value_type),
-        TICK_HAS_TYPE(T::reference, std::is_lvalue_reference<_>),
-        // TODO: Check for constness as well
-        TICK_HAS_TYPE(T::const_reference, std::is_lvalue_reference<_>),
-        TICK_HAS_TYPE(T::difference_type),
-        TICK_HAS_TYPE(T::size_type),
+        TICK_HAS_TYPE(T::reference, typename T::value_type&),
+        TICK_HAS_TYPE(T::const_reference, const typename T::value_type&),
+        TICK_HAS_TYPE(T::difference_type, int),
+        TICK_HAS_TYPE(T::size_type, unsigned),
         TICK_RETURNS(x.size(), typename T::size_type),
         TICK_RETURNS(x.max_size(), typename T::size_type),
         TICK_RETURNS(x.empty(), bool)
+    >;
+};
+
+TICK_TRAIT(is_reversible_container, is_container<_>)
+{
+    template<class T>
+    auto require(const T& x) -> valid<
+        TICK_HAS_TYPE(T::reverse_iterator, is_iterator<_>),
+        TICK_HAS_TYPE(T::const_reverse_iterator, is_iterator<_>),
+        TICK_RETURNS(x.crbegin(), typename T::const_reverse_iterator),
+        TICK_RETURNS(x.crend(), typename T::const_reverse_iterator),
+        TICK_RETURNS(x.rbegin(), typename T::const_reverse_iterator),
+        TICK_RETURNS(x.rend(), typename T::const_reverse_iterator),
+        TICK_RETURNS(as_mutable(x).rbegin(), typename T::reverse_iterator),
+        TICK_RETURNS(as_mutable(x).rend(), typename T::reverse_iterator)
     >;
 };
 

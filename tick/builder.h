@@ -231,6 +231,12 @@ struct is_false_c {};
     template<template<class...> class Template>
     class has_template {};
 
+    template<class T>
+    const T& as_const(const T&);
+
+    template<class T>
+    T& as_mutable(const T&);
+
 };
 
 template<class... Lambdas>

@@ -57,5 +57,10 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT_CHECK(tick::is_container<std::list<int>>);
     TICK_TRAIT_CHECK(tick::is_container<std::set<int>>);
     TICK_TRAIT_CHECK(tick::is_container<std::map<int, int>>);
+
+    TICK_TRAIT_CHECK(tick::is_reversible_container<std::vector<int>>);
+    TICK_TRAIT_CHECK(tick::is_reversible_container<std::list<int>>);
+    TICK_TRAIT_CHECK(tick::is_reversible_container<std::set<int>>);
+    TICK_TRAIT_CHECK(tick::is_reversible_container<std::map<int, int>>);
 };
 
