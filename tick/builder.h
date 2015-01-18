@@ -88,7 +88,11 @@ template<class T, class U>
 struct return_matches
 : detail::matches<U,T>
 {
-    static_assert(!detail::is_void<T>::value, "Void can't be used for returns");
+    static_assert(!detail::is_void<T>::value, 
+        "Void can't be used for returns. "
+        "Checking for void on returns will always be false when the expression is void as well. "
+        "Use TICK_RETURNS or has_type instead. "
+    );
 };
 
 template<bool...> struct bool_seq {};
