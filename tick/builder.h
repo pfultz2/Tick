@@ -58,6 +58,21 @@ struct bare
 : std::remove_cv<typename std::remove_reference<T>::type>
 {};
 
+template<class T>
+struct is_void
+: std::is_same<T, void>
+{};
+
+template<class T>
+struct is_void<std::is_same<T, void>>
+: std::true_type
+{};
+
+template<class T>
+struct is_void<std::is_same<void, T>>
+: std::true_type
+{};
+
 struct base_requires
 {
     template<class... Ts>
@@ -73,7 +88,7 @@ template<class T, class U>
 struct return_matches
 : detail::matches<U,T>
 {
-    // TODO: Check for void
+    static_assert(!detail::is_void<T>::value, "Void can't be used for returns");
 };
 
 template<bool...> struct bool_seq {};
