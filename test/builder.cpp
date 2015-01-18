@@ -371,6 +371,14 @@ TICK_STATIC_TEST_CASE()
         );
     };
 
+    TICK_TRAIT(has_numberic_nested_type)
+    {
+        template<class T>
+        auto require(T) -> decltype(
+            has_type<typename T::type, std::is_integral<_>, std::is_arithmetic<_>>()
+        );
+    };
+
     TICK_TRAIT(has_simple_nested_type)
     {
         template<class T>
@@ -395,6 +403,11 @@ TICK_STATIC_TEST_CASE()
         typedef invalid type;
     };
 
+    struct floating_point_nested_type
+    {
+        typedef float type;
+    };
+
     struct void_nested_type
     {
         typedef void type;
@@ -409,20 +422,28 @@ TICK_STATIC_TEST_CASE()
     static_assert(has_nested_type<nested_type>(), "No nested type");
     static_assert(not has_nested_type<no_nested_type>(), "nested type found");
     static_assert(not has_nested_type<invalid_nested_type>(), "Invalid nested type found");
-    static_assert(not has_nested_type<invalid_nested_type>(), "Templated nested type found");
+    static_assert(has_nested_type<floating_point_nested_type>(), "Floating point nested type not found");
     static_assert(not has_nested_type<void_nested_type>(), "Invalid void nested type found");
     static_assert(not has_nested_type<template_nested_type>(), "Templated nested type found");
 
     static_assert(has_integral_nested_type<nested_type>(), "No nested type");
     static_assert(not has_integral_nested_type<no_nested_type>(), "nested type found");
     static_assert(not has_integral_nested_type<invalid_nested_type>(), "Invalid nested type found");
-    static_assert(not has_integral_nested_type<invalid_nested_type>(), "Templated nested type found");
+    static_assert(not has_integral_nested_type<floating_point_nested_type>(), "Floating point nested type found");
     static_assert(not has_integral_nested_type<void_nested_type>(), "Invalid void nested type found");
     static_assert(not has_integral_nested_type<template_nested_type>(), "Templated nested type found");
+
+    static_assert(has_numberic_nested_type<nested_type>(), "No nested type");
+    static_assert(not has_numberic_nested_type<no_nested_type>(), "nested type found");
+    static_assert(not has_numberic_nested_type<invalid_nested_type>(), "Invalid nested type found");
+    static_assert(not has_numberic_nested_type<floating_point_nested_type>(), "Floating point nested type found");
+    static_assert(not has_numberic_nested_type<void_nested_type>(), "Invalid void nested type found");
+    static_assert(not has_numberic_nested_type<template_nested_type>(), "Templated nested type found");
 
     static_assert(has_simple_nested_type<nested_type>(), "No nested type");
     static_assert(not has_simple_nested_type<no_nested_type>(), "nested type found");
     static_assert(has_simple_nested_type<invalid_nested_type>(), "Invalid nested type found");
+    static_assert(has_simple_nested_type<floating_point_nested_type>(), "Floating point nested type found");
     static_assert(has_simple_nested_type<void_nested_type>(), "No void nested type found");
     static_assert(not has_simple_nested_type<template_nested_type>(), "Templated nested type found");
 

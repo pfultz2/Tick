@@ -53,6 +53,18 @@ struct template_holder
     typedef void type;
 };
 
+template<bool...> struct bool_seq {};
+
+template<class... Traits>
+struct fast_and
+: tick::integral_constant<bool, 
+    std::is_same<
+        detail::bool_seq<Traits::value...>, 
+        detail::bool_seq<(Traits::value, true)...>
+    >::type::value
+>
+{};
+
 template<class T>
 struct bare
 : std::remove_cv<typename std::remove_reference<T>::type>
@@ -65,12 +77,12 @@ struct is_void
 
 template<class T>
 struct is_void<std::is_same<T, void>>
-: std::true_type
+: tick::true_type
 {};
 
 template<class T>
 struct is_void<std::is_same<void, T>>
-: std::true_type
+: tick::true_type
 {};
 
 struct base_requires
@@ -81,7 +93,12 @@ struct base_requires
 
 template<class T>
 struct always_false
-: tick::integral_constant<bool, false>
+: tick::false_type
+{};
+
+template<class T, class... Us>
+struct multi_match
+: fast_and<matches<T, Us>...>
 {};
 
 template<class T, class U>
@@ -95,16 +112,9 @@ struct return_matches
     );
 };
 
-template<bool...> struct bool_seq {};
-
 template<class... Traits>
 struct base_traits
-: tick::integral_constant<bool, 
-    std::is_same<
-        detail::bool_seq<Traits::value...>, 
-        detail::bool_seq<(Traits::value, true)...>
-    >::type::value
->
+: fast_and<Traits...>
 {
     typedef base_traits<Traits...> base_traits_type;
 };
@@ -167,8 +177,8 @@ class ops : public tick::local_placeholders
     struct private_enable_if
     : std::enable_if<B, private_type>
     {};
-    template<class T, class U> 
-    struct has_type_ : private_enable_if<detail::matches<T,U>::value> {};
+    template<class T, class... Us> 
+    struct has_type_ : private_enable_if<detail::multi_match<T, Us...>::value> {};
     template<class T> 
     struct is_true_ : private_enable_if<T::value> {};
     template<class T> 
@@ -188,12 +198,12 @@ public:
         typename std::enable_if<detail::return_matches<T,U>::value, int>::type;
 
 // A macro to provide better compatibility for gcc 4.6
-#define TICK_RETURNS(expr, ...) typename std::enable_if<tick::detail::matches<decltype(expr),__VA_ARGS__>::value, int>::type
+#define TICK_RETURNS(expr, ...) typename std::enable_if<tick::detail::multi_match<decltype(expr),__VA_ARGS__>::value, int>::type
 
 
 #if TICK_HAS_TEMPLATE_ALIAS
-template<class T, class U=void>
-using has_type = typename has_type_<T, U>::type; 
+template<class... Ts>
+using has_type = typename has_type_<Ts...>::type; 
 
 template<class T>
 using is_true = typename is_true_<T>::type; 
@@ -213,8 +223,9 @@ using is_false_c = typename is_false_c_<V>::type;
 #define TICK_IS_TRUE_C(...) is_true_c<__VA_ARGS__>
 #define TICK_IS_FALSE_C(...) is_false_c<__VA_ARGS__>
 #else
-template<class T, class U=void, class Enable=typename has_type_<T, U>::type>
-struct has_type {}; 
+
+template<class... Ts, class=typename has_type_<Ts...>::type>
+static void has_type();
 
 template<class T, class Enable=typename is_true_<T>::type>
 struct is_true {}; 
