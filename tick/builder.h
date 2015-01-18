@@ -53,21 +53,9 @@ struct template_holder
     typedef void type;
 };
 
-struct void_ {};
-template<class T> T&& operator,(T&& x, void_);
-
 template<class T>
 struct bare
 : std::remove_cv<typename std::remove_reference<T>::type>
-{};
-
-template<class T>
-struct avoid
-: std::conditional<
-    std::is_same<typename bare<T>::type, void_>::value,
-    void,
-    T
->
 {};
 
 struct base_requires
@@ -83,8 +71,9 @@ struct always_false
 
 template<class T, class U>
 struct return_matches
-: detail::matches<typename detail::avoid<U>::type,T>
+: detail::matches<U,T>
 {
+    // TODO: Check for void
 };
 
 template<bool...> struct bool_seq {};
@@ -180,7 +169,7 @@ public:
         typename std::enable_if<detail::return_matches<T,U>::value, int>::type;
 
 // A macro to provide better compatibility for gcc 4.6
-#define TICK_RETURNS(expr, ...) decltype(returns<__VA_ARGS__>((expr, tick::detail::void_())))
+#define TICK_RETURNS(expr, ...) typename std::enable_if<tick::detail::matches<decltype(expr),__VA_ARGS__>::value, int>::type
 
 
 #if TICK_HAS_TEMPLATE_ALIAS
@@ -232,10 +221,10 @@ struct is_false_c {};
     class has_template {};
 
     template<class T>
-    const T& as_const(const T&);
+    static const T& as_const(const T&);
 
     template<class T>
-    T& as_mutable(const T&);
+    static T& as_mutable(const T&);
 
 };
 

@@ -62,5 +62,11 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT_CHECK(tick::is_reversible_container<std::list<int>>);
     TICK_TRAIT_CHECK(tick::is_reversible_container<std::set<int>>);
     TICK_TRAIT_CHECK(tick::is_reversible_container<std::map<int, int>>);
+
+    TICK_TRAIT_CHECK(tick::is_sequence_container<std::vector<int>>);
+    TICK_TRAIT_CHECK(tick::is_sequence_container<std::list<int>>);
+
+    static_assert(!tick::is_sequence_container<std::map<int, int>>(), "Not a sequence container");
+    static_assert(!tick::is_sequence_container<std::set<int>>(), "Not a sequence container");
 };
 

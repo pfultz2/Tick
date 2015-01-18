@@ -347,6 +347,33 @@ TICK_TRAIT(is_reversible_container, is_container<_>)
     >;
 };
 
+TICK_TRAIT(is_sequence_container, is_container<_>)
+{
+    template<class X, class T, class N, class Iterator>
+    auto require(X& a, const T& t, N n, const Iterator& p) -> valid<
+        TICK_RETURNS(a.insert(p, t), Iterator),
+        // This should return an iterator too in C++11 but currently gcc does not
+        // implement it
+        TICK_RETURNS(a.insert(p, n, t), void),
+        TICK_RETURNS(a.erase(p), Iterator),
+        TICK_RETURNS(a.erase(p, p), Iterator),
+        decltype(a.clear()),
+        decltype(a.assign(n, t))
+    >;
+
+    template<class T>
+    auto require(const T& x) -> valid<
+        decltype(require(
+            as_mutable(x), 
+            std::declval<typename T::value_type>(), 
+            std::declval<typename T::size_type>(),
+            // Should be a const_iterator, but many containers don't implement
+            // this correctly
+            std::declval<typename T::iterator>()
+        ))
+    >;
+};
+
 
 }
 
