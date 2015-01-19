@@ -224,8 +224,8 @@ using is_false_c = typename is_false_c_<V>::type;
 #define TICK_IS_FALSE_C(...) is_false_c<(__VA_ARGS__)>
 #else
 
-template<class... Ts, class=typename has_type_<Ts...>::type>
-static void has_type();
+template<class T, class... Us>
+static typename has_type_<T, Us...>::type has_type(void);
 
 template<class T, class Enable=typename is_true_<T>::type>
 struct is_true {}; 
