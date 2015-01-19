@@ -68,5 +68,11 @@ TICK_STATIC_TEST_CASE()
 
     static_assert(!tick::is_sequence_container<std::map<int, int>>(), "Not a sequence container");
     static_assert(!tick::is_sequence_container<std::set<int>>(), "Not a sequence container");
+
+    TICK_TRAIT_CHECK(tick::is_associative_container<std::map<int, int>>);
+    TICK_TRAIT_CHECK(tick::is_associative_container<std::set<int>>);
+
+    static_assert(!tick::is_associative_container<std::vector<int>>(), "Not a associative container");
+    static_assert(!tick::is_associative_container<std::list<int>>(), "Not a associative container");
 };
 
