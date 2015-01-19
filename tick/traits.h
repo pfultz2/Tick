@@ -43,17 +43,56 @@ using bare_t = typename bare<T>::type;
 
 #endif
 
-using std::is_default_constructible;
-using std::is_copy_constructible;
-using std::is_copy_assignable;
-using std::is_move_constructible;
-using std::is_move_assignable;
-using std::is_destructible;
+template<class T>
+struct is_default_constructible
+: integral_constant<bool, std::is_default_constructible<T>::value>
+{};
 
-// using std::is_trivially_copyable;
-using std::is_trivial;
-using std::is_standard_layout;
-using std::is_pod;
+template<class T>
+struct is_copy_constructible
+: integral_constant<bool, std::is_copy_constructible<T>::value>
+{};
+
+template<class T>
+struct is_copy_assignable
+: integral_constant<bool, std::is_copy_assignable<T>::value>
+{};
+
+template<class T>
+struct is_move_constructible
+: integral_constant<bool, std::is_move_constructible<T>::value>
+{};
+
+template<class T>
+struct is_move_assignable
+: integral_constant<bool, std::is_move_assignable<T>::value>
+{};
+
+template<class T>
+struct is_destructible
+: integral_constant<bool, std::is_destructible<T>::value>
+{};
+
+// We use trival for trivally copyable since isn't implemented yet in gcc
+template<class T>
+struct is_trivially_copyable
+: integral_constant<bool, std::is_trivial<T>::value>
+{};
+
+template<class T>
+struct is_trivial
+: integral_constant<bool, std::is_trivial<T>::value>
+{};
+
+template<class T>
+struct is_standard_layout
+: integral_constant<bool, std::is_standard_layout<T>::value>
+{};
+
+template<class T>
+struct is_pod
+: integral_constant<bool, std::is_pod<T>::value>
+{};
 
 TICK_TRAIT(is_equality_comparable)
 {
