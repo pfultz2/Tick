@@ -53,8 +53,7 @@ endmacro(add_test_executable)
 
 # Moved down, so everything above is common
 if (BIICODE) 
-    INIT_BIICODE_BLOCK()
-    ADD_BIICODE_TARGETS()
+    ADD_BII_TARGETS()
     target_compile_options(${BII_LIB_TARGET} INTERFACE ${CXX_EXTRA_FLAGS})
     foreach (test ${BII_BLOCK_EXES})
         add_test_executable(${test})
