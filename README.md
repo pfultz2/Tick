@@ -51,7 +51,7 @@ Then we get an error like this in clang:
     template<class T, TICK_REQUIRES(is_incrementable<T>())>
                       ^
 
-This gives an error at the call to `increment` rather than inside the function, and then pointes to the type requirements of the function. This gives enough information for most commons cases, however, sometimes we may want more information. In that case the `TICK_TRAIT_CHECK` can be used. For example, say we had the `is_incrementable` trait defined like this:
+This gives an error at the call to `increment` rather than inside the function, and then points to the type requirements of the function. This gives enough information for most commons cases, however, sometimes we may want more information. In that case the `TICK_TRAIT_CHECK` can be used. For example, say we had the `is_incrementable` trait defined like this:
 ```cpp
 TICK_TRAIT(is_incrementable, std::is_integral<_>)
 {
