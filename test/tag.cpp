@@ -42,6 +42,10 @@ TICK_TRAIT(is_advanceable, is_decrementable<_>)
     >;
 };
 
+TICK_TRAIT(is_numeric, is_incrementable<_>, is_decrementable<_>, is_advanceable<_, int>)
+{
+};
+
 TICK_STATIC_TEST_CASE()
 {
     typedef typename is_advanceable<tick::detail::no_check>::type::tick_trait_refinements check_refines;
@@ -59,18 +63,22 @@ TICK_STATIC_TEST_CASE()
 
 TICK_STATIC_TEST_CASE()
 {
+    static_assert(is_numeric<int>(), "Not numeric");
     static_assert(is_advanceable<int, int>(), "Not advanceable");
     static_assert(is_decrementable<int>(), "Not decrementable");
     static_assert(is_incrementable<int>(), "Not incrementable");
 
+    static_assert(std::is_base_of<tick::tag<is_numeric>, tick::most_refined<is_numeric<int>>>(), "Not tag base");
     static_assert(std::is_base_of<tick::tag<is_advanceable>, tick::most_refined<is_advanceable<int, int>>>(), "Not tag base");
     static_assert(std::is_base_of<tick::tag<is_decrementable>, tick::most_refined<is_advanceable<int, int>>>(), "Not tag base");
     static_assert(std::is_base_of<tick::tag<is_incrementable>, tick::most_refined<is_advanceable<int, int>>>(), "Not tag base");
 
+    static_assert(not std::is_base_of<tick::tag<is_numeric>, tick::most_refined<is_decrementable<int>>>(), "Not tag base");
     static_assert(not std::is_base_of<tick::tag<is_advanceable>, tick::most_refined<is_decrementable<int>>>(), "Not tag base");
     static_assert(std::is_base_of<tick::tag<is_decrementable>, tick::most_refined<is_decrementable<int>>>(), "Not tag base");
     static_assert(std::is_base_of<tick::tag<is_incrementable>, tick::most_refined<is_decrementable<int>>>(), "Not tag base");
 
+    static_assert(not std::is_base_of<tick::tag<is_numeric>, tick::most_refined<is_incrementable<int>>>(), "Not tag base");
     static_assert(not std::is_base_of<tick::tag<is_advanceable>, tick::most_refined<is_incrementable<int>>>(), "Not tag base");
     static_assert(not std::is_base_of<tick::tag<is_decrementable>, tick::most_refined<is_incrementable<int>>>(), "Not tag base");
     static_assert(std::is_base_of<tick::tag<is_incrementable>, tick::most_refined<is_incrementable<int>>>(), "Not tag base");
@@ -126,6 +134,36 @@ TICK_TEST_CASE()
     std::vector<int> v = { 1, 2, 3, 4, 5, 6 };
     auto iterator = v.begin();
     advance(iterator, 4);
+    TICK_TEST_CHECK(*iterator == 5);
+}
+
+template<class Iterator>
+void advance_numeric(Iterator& it, int n)
+{
+    advance_impl(it, n, tick::most_refined<is_numeric<Iterator>>());
+}
+
+TICK_TEST_CASE()
+{
+    std::list<int> l = { 1, 2, 3, 4, 5, 6 };
+    auto iterator = l.begin();
+    advance_numeric(iterator, 4);
+    TICK_TEST_CHECK(*iterator == 5);
+}
+
+TICK_TEST_CASE()
+{
+    std::list<int> l = { 1, 2, 3, 4, 5, 6 };
+    auto iterator = l.end();
+    advance_numeric(iterator, -4);
+    TICK_TEST_CHECK(*iterator == 3);
+}
+
+TICK_TEST_CASE()
+{
+    std::vector<int> v = { 1, 2, 3, 4, 5, 6 };
+    auto iterator = v.begin();
+    advance_numeric(iterator, 4);
     TICK_TEST_CHECK(*iterator == 5);
 }
 

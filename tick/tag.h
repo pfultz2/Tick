@@ -37,7 +37,7 @@ struct make_tag;
 
 template<class... Ts, template<class...> class Template>
 struct make_tag<Template<Ts...>>
-: tag<Template>
+: virtual tag<Template>
 {};
 
 template<class T>
@@ -45,7 +45,7 @@ struct make_tags;
 
 template<class... Ts>
 struct make_tags<refines<Ts...>>
-: make_tag<Ts>...
+: virtual make_tag<Ts>...
 {};
 
 template<class Refinements, class... Ts>
@@ -53,7 +53,7 @@ struct get_tags;
 
 template<class... Lambdas, class... Ts>
 struct get_tags<refines<Lambdas...>, Ts...>
-: most_refined<typename replace_args<Lambdas, Ts...>::type>...
+: virtual most_refined<typename replace_args<Lambdas, Ts...>::type>...
 {};
 
 template<class T>
