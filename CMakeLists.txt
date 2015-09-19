@@ -32,6 +32,10 @@ endforeach()
 
 install (DIRECTORY tick DESTINATION include)
 
+configure_file(tick.pc.in tick.pc)
+install(FILES tick.pc DESTINATION lib/pkgconfig)
+
+
 # Moved down, so everything above is common
 if (BIICODE) 
     ADD_BII_TARGETS()
