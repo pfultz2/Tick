@@ -24,7 +24,7 @@ struct tuple_replace<std::tuple<Ts...>>
     struct apply
     : std::tuple_element<Placeholder::value - 1, Tuple>
     {
-        static_assert(Placeholder::value <= std::tuple_size<Tuple>::value, "Invalid placeholder");
+        static_assert(static_cast<std::size_t>(Placeholder::value) <= std::tuple_size<Tuple>::value, "Invalid placeholder");
     };
 
     template<template<class...> class Template>
