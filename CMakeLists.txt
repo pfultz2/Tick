@@ -3,7 +3,7 @@ project (Tick)
  
 # The version number.
 set (Tick_VERSION_MAJOR 1)
-set (Tick_VERSION_MINOR 1)
+set (Tick_VERSION_MINOR 2)
 
 include(CheckCXXCompilerFlag)
 enable_language(CXX)
