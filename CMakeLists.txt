@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.6)
 project (Tick)
  
 # The version number.
-set (Tick_VERSION_MAJOR 0)
+set (Tick_VERSION_MAJOR 1)
 set (Tick_VERSION_MINOR 1)
 
 include(CheckCXXCompilerFlag)
