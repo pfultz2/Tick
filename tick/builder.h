@@ -193,9 +193,9 @@ public:
     template<class...>
     struct valid {};
 
-    template<typename T, typename U>
+    template<class... Ts, class U>
     static auto returns(U &&) ->
-        typename std::enable_if<detail::return_matches<T,U>::value, int>::type;
+        typename std::enable_if<tick::detail::multi_match<U, Ts...>::value, int>::type;
 
 // A macro to provide better compatibility for gcc 4.6
 #define TICK_RETURNS(expr, ...) typename std::enable_if<tick::detail::multi_match<decltype(expr),__VA_ARGS__>::value, int>::type
