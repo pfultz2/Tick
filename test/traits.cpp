@@ -47,6 +47,11 @@ TICK_STATIC_TEST_CASE()
 
 TICK_STATIC_TEST_CASE()
 {
+    TICK_TRAIT_CHECK(tick::is_allocator<std::allocator<int>>);
+};
+
+TICK_STATIC_TEST_CASE()
+{
     TICK_TRAIT_CHECK(tick::is_range<std::vector<int>>);
     TICK_TRAIT_CHECK(tick::is_range<std::list<int>>);
     TICK_TRAIT_CHECK(tick::is_range<std::set<int>>);

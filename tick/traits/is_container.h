@@ -13,13 +13,26 @@
 #include <tick/traits/is_default_constructible.h>
 #include <tick/traits/is_copy_constructible.h>
 #include <tick/traits/is_copy_assignable.h>
+#include <tick/traits/is_copy_insertable.h>
 #include <tick/traits/is_destructible.h>
 #include <tick/traits/is_swappable.h>
 #include <tick/traits/is_range.h>
 
 namespace tick {
 
-// TODO: Add CopyInsertable
+namespace detail {
+
+TICK_TRAIT(is_copy_insertable_container)
+{
+    template<class T>
+    auto require(const T& x) -> valid<
+        TICK_IS_TRUE(is_copy_insertable<T, typename T::value_type>)
+    >;
+};
+
+
+}
+
 TICK_TRAIT(is_container,
     is_equality_comparable<_>,
     is_default_constructible<_>,
@@ -27,7 +40,8 @@ TICK_TRAIT(is_container,
     is_copy_assignable<_>,
     is_destructible<_>,
     is_swappable<_>,
-    is_range<_>
+    is_range<_>,
+    detail::is_copy_insertable_container<_>
 )
 {
     template<class T>
