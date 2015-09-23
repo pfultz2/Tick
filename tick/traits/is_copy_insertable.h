@@ -13,7 +13,7 @@
 
 namespace tick {
 
-TICK_TRAIT(is_copy_insertable, 
+TICK_TRAIT(is_copy_insertable,
     is_move_insertable<_1, _2>
 )
 {

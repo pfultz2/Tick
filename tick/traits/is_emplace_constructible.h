@@ -21,7 +21,12 @@ TICK_TRAIT(is_emplace_constructible)
         TICK_HAS_TYPE(C::allocator_type, is_allocator<_>),
         TICK_RETURNS(c.get_allocator(), typename C::allocator_type),
         decltype(
+// Allocator traits is not supported on gcc 4.7 and earlier
+#if defined (__GNUC__) && !defined (__clang__) && __GNUC__ == 4 && __GNUC_MINOR__ < 8
+            void()
+#else
             std::allocator_traits<typename C::allocator_type>::construct(as_mutable(c.get_allocator()), std::declval<T*>(), std::declval<Ts>()...)
+#endif
         )
     >;
 };
