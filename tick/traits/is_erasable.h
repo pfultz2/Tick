@@ -21,7 +21,12 @@ TICK_TRAIT(is_erasable)
         TICK_HAS_TYPE(C::allocator_type, is_allocator<_>),
         TICK_RETURNS(C::get_allocator(), typename C::allocator_type&),
         decltype(
+// Gcc 4.6 doesn't have allocator traits
+#if defined (__GNUC__) && !defined (__clang__) && __GNUC__ == 4 && __GNUC_MINOR__ < 7
+            void()
+#else
             std::allocator_traits<typename C::allocator_type>::destroy(C::get_allocator(), std::declval<T*>())
+#endif
         )
     >;
 };
