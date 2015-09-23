@@ -19,21 +19,11 @@ TICK_TRAIT(is_allocator,
     is_equality_comparable<_>
 )
 {
-    // template<class A, class T>
-    // auto require(const A& a, const T&) -> valid<
-    //     TICK_HAS_TYPE(A::value_type, T),
-    //     TICK_RETURNS(a.allocate(std::declval<std::size_t>()), is_nullable_pointer<_>, is_random_access_iterator<_>),
-    //     TICK_RETURNS(*a.allocate(std::declval<std::size_t>()), typename A::value_type&)
-    // >;
-
     template<class A>
-    auto require(const A& a)
-    { 
-        return valid<
-            TICK_RETURNS(as_mutable(a).allocate(std::declval<std::size_t>()), is_nullable_pointer<_>, is_random_access_iterator<_>),
-            TICK_RETURNS(*(as_mutable(a).allocate(std::declval<std::size_t>())), typename A::value_type&)
-        >();
-    }
+    auto require(const A& a)-> valid<
+        TICK_RETURNS(as_mutable(a).allocate(std::declval<std::size_t>()), is_nullable_pointer<_>, is_random_access_iterator<_>),
+        TICK_RETURNS(*(as_mutable(a).allocate(std::declval<std::size_t>())), typename A::value_type&)
+    >;
 };
 
 }
