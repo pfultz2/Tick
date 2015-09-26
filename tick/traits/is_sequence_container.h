@@ -15,8 +15,11 @@ namespace tick {
 
 TICK_TRAIT(is_sequence_container, is_container<_>)
 {
+    // TODO: Check constructors
     template<class X, class T, class N, class Iterator>
     static auto req_impl(X& a, const T& t, N n, const Iterator& p) -> valid<
+        decltype(X(0, t)),
+        decltype(X(p, p)),
         TICK_RETURNS(a.insert(p, t), Iterator),
         // This should return an iterator too in C++11 but currently gcc does not
         // implement it
@@ -24,9 +27,12 @@ TICK_TRAIT(is_sequence_container, is_container<_>)
         TICK_RETURNS(a.erase(p), Iterator),
         TICK_RETURNS(a.erase(p, p), Iterator),
         decltype(a.clear()),
-        decltype(a.assign(n, t))
+        decltype(a.assign(n, t)),
+        TICK_RETURNS(a.front(), typename X::reference),
+        TICK_RETURNS(as_const(a).front(), typename X::const_reference)
     >;
 
+    // TODO: Check the rest of the methods
     template<class T>
     auto require(const T& x) -> valid<
         decltype(req_impl(
