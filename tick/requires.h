@@ -53,9 +53,11 @@ trait(Ts&&...) noexcept
 
 #define TICK_CLASS_REQUIRES(...) typename std::enable_if<(__VA_ARGS__)>::type
 
-#define TICK_REQUIRES(...) bool TickPrivateBool ## __LINE__=true, typename std::enable_if<(TickPrivateBool##__LINE__ && __VA_ARGS__), int>::type = 0
+#define TICK_REQUIRES(...)    bool TickPrivateBool ## __LINE__=true, typename std::enable_if<(TickPrivateBool##__LINE__ && __VA_ARGS__), int>::type = 0
+#define TICK_REQUIRES_OC(...) bool TickPrivateBool ## __LINE__,      typename std::enable_if<(TickPrivateBool##__LINE__ && __VA_ARGS__), int>::type
 
-#define TICK_MEMBER_REQUIRES(...) template<TICK_REQUIRES(__VA_ARGS__)>
+#define TICK_MEMBER_REQUIRES(...)    template<TICK_REQUIRES(   __VA_ARGS__)>
+#define TICK_MEMBER_REQUIRES_OC(...) template<TICK_REQUIRES_OC(__VA_ARGS__)>
 
 #define TICK_PARAM_REQUIRES(...) \
 typename std::enable_if< \

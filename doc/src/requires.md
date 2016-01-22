@@ -57,6 +57,25 @@ struct foo
 };
 ```
 
+If the member is defined outside of the class, use `TICK_MEMBER_REQUIRES_OC` (OC: outside_class) outside the class. For example,
+```cpp
+template<class T>
+struct foo
+{
+    T x;
+
+    TICK_MEMBER_REQUIRES(is_incrementable<T>())
+    void up();
+};
+
+template<class T>
+TICK_MEMBER_REQUIRES_OC(is_incrementable<T>())
+void foo<T>::up()
+{
+    x++;
+}
+```
+
 TICK_PARAM_REQUIRES
 --------------------
 
