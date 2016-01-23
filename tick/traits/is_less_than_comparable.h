@@ -8,6 +8,51 @@
 #ifndef TICK_GUARD_IS_LESS_THAN_COMPARABLE_H
 #define TICK_GUARD_IS_LESS_THAN_COMPARABLE_H
 
+/// is_less_than_comparable
+/// =======================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if type `T` has operator `<` and is convertible to
+/// `bool`.
+/// 
+/// Requirements
+/// ------------
+/// 
+/// The type `T` satisfies `is_less_than_comparable` if
+/// 
+/// Given:
+/// 
+/// * a, and b expressions of type T or const T
+/// 
+/// The following expressions must be valid:
+/// 
+/// | Expression | Return type                      |
+/// |------------|----------------------------------|
+/// | `a < b`    | implicitly convertible to `bool` |
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_less_than_comparable)
+///     {
+///         template<class T>
+///         auto require(T&& x) -> valid<
+///             decltype(returns<bool>(x < x))
+///         >;
+///     
+///         template<class T, class U>
+///         auto require(T&& x, U&& y) -> valid<
+///             decltype(returns<bool>(x < x)),
+///             decltype(returns<bool>(y < y)),
+///             decltype(returns<bool>(x < y)),
+///             decltype(returns<bool>(y < x))
+///         >;
+///     };
+/// 
+
+
 #include <tick/builder.h>
 
 namespace tick {

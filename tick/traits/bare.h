@@ -8,6 +8,22 @@
 #ifndef TICK_GUARD_BARE_H
 #define TICK_GUARD_BARE_H
 
+/// bare
+/// ====
+/// 
+/// Description
+/// -----------
+/// 
+/// The `bare` trait remvoes both the reference and the `const`/`volatile`
+/// qualifiers.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     template<class T>
+///     struct bare;
+/// 
+
 #include <type_traits>
 
 namespace tick {

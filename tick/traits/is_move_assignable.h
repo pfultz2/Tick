@@ -8,6 +8,26 @@
 #ifndef TICK_GUARD_IS_MOVE_ASSIGNABLE_H
 #define TICK_GUARD_IS_MOVE_ASSIGNABLE_H
 
+/// is_move_assignable
+/// ==================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if type `T` can be assigned from an rvalue.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_move_assignable)
+///     {
+///         template<class T>
+///         auto require(T&& x) -> valid<
+///             decltype(x = std::move(x))
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {

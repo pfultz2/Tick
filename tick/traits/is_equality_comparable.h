@@ -8,6 +8,55 @@
 #ifndef TICK_GUARD_IS_EQUALITY_COMPARABLE_H
 #define TICK_GUARD_IS_EQUALITY_COMPARABLE_H
 
+/// is_equality_comparable
+/// ======================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if type `T` has operator `==` and `!=` and is convertible to
+/// `bool`.
+/// 
+/// Requirements
+/// ------------
+/// 
+/// The type `T` satisfies `is_equality_comparable` if
+/// 
+/// Given:
+/// 
+/// * a, and b expressions of type T or const T
+/// 
+/// The following expressions must be valid:
+/// 
+/// | Expression | Return type                      |
+/// |------------|----------------------------------|
+/// | `a == b`   | implicitly convertible to `bool` |
+/// | `a != b`   | implicitly convertible to `bool` |
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_equality_comparable)
+///     {
+///         template<class T>
+///         auto require(T&& x) -> valid<
+///             decltype(returns<bool>(x == x)),
+///             decltype(returns<bool>(x != x))
+///         >;
+///     
+///         template<class T, class U>
+///         auto require(T&& x, U&& y) -> valid<
+///             decltype(require(std::forward<T>(x))),
+///             decltype(require(std::forward<U>(y))),
+///             decltype(returns<bool>(x == y)),
+///             decltype(returns<bool>(x != y)),
+///             decltype(returns<bool>(y == x)),
+///             decltype(returns<bool>(y != x))
+///         >;
+///     };
+/// 
+
+
 #include <tick/builder.h>
 
 namespace tick {

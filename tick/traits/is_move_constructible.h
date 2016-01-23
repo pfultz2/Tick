@@ -8,6 +8,26 @@
 #ifndef TICK_GUARD_IS_MOVE_CONSTRUCTIBLE_H
 #define TICK_GUARD_IS_MOVE_CONSTRUCTIBLE_H
 
+/// is_move_constructible
+/// =====================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if type `T` can be constructed from an rvalue.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_move_constructible)
+///     {
+///         template<class T>
+///         auto require(const T& x) -> valid<
+///             decltype(T(std::move(x)))
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {

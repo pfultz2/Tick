@@ -8,6 +8,26 @@
 #ifndef TICK_GUARD_IS_DEFAULT_CONSTRUCTIBLE_H
 #define TICK_GUARD_IS_DEFAULT_CONSTRUCTIBLE_H
 
+/// is_default_constructible
+/// ========================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if a type `T` is default constructible.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_default_constructible)
+///     {
+///         template<class T>
+///         auto require(const T&) -> valid<
+///             decltype(T())
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {

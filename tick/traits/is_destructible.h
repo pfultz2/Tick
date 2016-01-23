@@ -8,6 +8,26 @@
 #ifndef TICK_GUARD_IS_DESTRUCTIBLE_H
 #define TICK_GUARD_IS_DESTRUCTIBLE_H
 
+/// is_destructible
+/// ==================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if type `T` can be destructed.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_destructible)
+///     {
+///         template<class T>
+///         auto require(const T& x) -> valid<
+///             decltype(as_mutable(x).~T())
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {

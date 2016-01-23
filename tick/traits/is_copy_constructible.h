@@ -8,6 +8,26 @@
 #ifndef TICK_GUARD_IS_COPY_CONSTRUCTIBLE_H
 #define TICK_GUARD_IS_COPY_CONSTRUCTIBLE_H
 
+/// is_copy_constructible
+/// =====================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if type `T` can be copy-constructed from an lvalue.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_copy_constructible)
+///     {
+///         template<class T>
+///         auto require(const T& x) -> valid<
+///             decltype(T(x))
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {

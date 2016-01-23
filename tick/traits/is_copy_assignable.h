@@ -8,6 +8,26 @@
 #ifndef TICK_GUARD_IS_COPY_ASSIGNABLE_H
 #define TICK_GUARD_IS_COPY_ASSIGNABLE_H
 
+/// is_copy_assignable
+/// ==================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if type `T` can be copy-assigned from an lvalue.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_copy_assignable)
+///     {
+///         template<class T>
+///         auto require(T&& x) -> valid<
+///             decltype(x = as_const(x))
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {
