@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <tick/integral_constant.h>
 #include <tick/requires.h>
+#include <cassert>
 
 struct not_int {};
 
@@ -163,3 +164,36 @@ TICK_STATIC_TEST_CASE()
     STATIC_ASSERT_SAME(decltype(check_param_trait_requires(not_int())), std::false_type);
 };
 
+
+
+template<class T>
+struct member_requires_oc
+{
+    T x;
+
+    TICK_MEMBER_REQUIRES(std::is_same<T, int>::value)
+    int foo();
+
+    TICK_MEMBER_REQUIRES(std::is_same<T, char>::value)
+    char foo();
+};
+
+template<class T>
+TICK_MEMBER_REQUIRES_OC(std::is_same<T, int>::value)
+int member_requires_oc<T>::foo()
+{
+    return 123;
+}
+
+template<class T>
+TICK_MEMBER_REQUIRES_OC(std::is_same<T, char>::value)
+char member_requires_oc<T>::foo()
+{
+    return 'a';
+}
+
+TICK_TEST_CASE()
+{
+    assert(member_requires_oc<int>().foo() == 123);
+    assert(member_requires_oc<char>().foo() == 'a');
+}
