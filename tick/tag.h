@@ -19,6 +19,27 @@ template<class T>
 struct most_refined;
 
 namespace detail {
+#ifdef _MSC_VER
+struct empty_type
+{};
+
+template<class T, class=void>
+struct get_nested_type_private
+: empty_type
+{};
+
+template<class T>
+struct get_nested_type_private<T, typename holder<
+    typename T::type
+>::type>
+: T::type
+{};
+
+template<class T, class... Ts>
+struct get_nested_type
+: get_nested_type_private<T>
+{};
+#endif
 
 template<class T, class=void>
 struct get_refinements
@@ -26,7 +47,11 @@ struct get_refinements
 
 template<class...Ts, template<class...> class Template>
 struct get_refinements<Template<Ts...>, typename holder<
+#ifdef _MSC_VER
+    typename get_nested_type<Template<no_check>, Ts...>::tick_trait_refinements
+#else
     typename Template<no_check>::type::tick_trait_refinements
+#endif
 >::type>
 {
     typedef typename Template<no_check>::type::tick_trait_refinements type;
