@@ -53,8 +53,21 @@ struct template_holder
     typedef void type;
 };
 
-template<bool...> struct bool_seq {};
+#ifdef _MSC_VER
+template<class... Ts>
+struct fast_and;
 
+template<class T, class... Ts>
+struct fast_and<T, Ts...>
+: tick::integral_constant<bool, (T::value && fast_and<Ts...>::value)>
+{};
+
+template<>
+struct fast_and<>
+: tick::true_type
+{};
+#else
+template<bool...> struct bool_seq {};
 template<class... Traits>
 struct fast_and
 : tick::integral_constant<bool, 
@@ -64,6 +77,7 @@ struct fast_and
     >::type::value
 >
 {};
+#endif
 
 template<class T>
 struct bare
@@ -130,7 +144,7 @@ struct refine_traits
 };
 
 template<class T>
-struct refine_traits<T, typename detail::template_holder<T::template tick_trait_base_apply>::type>
+struct refine_traits<T, typename detail::holder<typename T::tick_trait_base_apply_type>::type>
 {
     template<class... Ts>
     struct apply
@@ -262,6 +276,7 @@ template<class... Lambdas>
 struct refines
 {
     typedef refines<Lambdas...> tick_trait_refinements;
+    typedef void tick_trait_base_apply_type;
     template<class... Ts>
     struct tick_trait_base_apply
     : detail::base_traits<typename tick::detail::replace_args<Lambdas, Ts...>::type...>
