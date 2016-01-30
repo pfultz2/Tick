@@ -5,8 +5,12 @@
 
 #include <memory>
 #include <map>
+#include <unordered_map>
 #include <list>
 #include <set>
+#include <unordered_set>
+#include <string>
+#include <deque>
 
 TICK_STATIC_TEST_CASE()
 {
@@ -47,6 +51,11 @@ TICK_STATIC_TEST_CASE()
 
 TICK_STATIC_TEST_CASE()
 {
+    TICK_TRAIT_CHECK(tick::is_allocator<std::allocator<int>>);
+};
+
+TICK_STATIC_TEST_CASE()
+{
     TICK_TRAIT_CHECK(tick::is_range<std::vector<int>>);
     TICK_TRAIT_CHECK(tick::is_range<std::list<int>>);
     TICK_TRAIT_CHECK(tick::is_range<std::set<int>>);
@@ -65,12 +74,17 @@ TICK_STATIC_TEST_CASE()
 
     TICK_TRAIT_CHECK(tick::is_sequence_container<std::vector<int>>);
     TICK_TRAIT_CHECK(tick::is_sequence_container<std::list<int>>);
+    TICK_TRAIT_CHECK(tick::is_sequence_container<std::deque<int>>);
+    TICK_TRAIT_CHECK(tick::is_sequence_container<std::string>);
 
     static_assert(!tick::is_sequence_container<std::map<int, int>>(), "Not a sequence container");
-    static_assert(!tick::is_sequence_container<std::set<int>>(), "Not a sequence container");
+    // Dont check against a set, since it can almost look like a sequence container
+    // static_assert(!tick::is_sequence_container<std::set<int>>(), "Not a sequence container");
 
     TICK_TRAIT_CHECK(tick::is_associative_container<std::map<int, int>>);
     TICK_TRAIT_CHECK(tick::is_associative_container<std::set<int>>);
+    TICK_TRAIT_CHECK(tick::is_associative_container<std::multimap<int, int>>);
+    TICK_TRAIT_CHECK(tick::is_associative_container<std::multiset<int>>);
 
     static_assert(!tick::is_associative_container<std::vector<int>>(), "Not a associative container");
     static_assert(!tick::is_associative_container<std::list<int>>(), "Not a associative container");
