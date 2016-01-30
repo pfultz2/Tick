@@ -183,24 +183,27 @@ template<class...Ts, class Trait,
 auto models_(Trait &&) -> typename refine_traits<Trait>::template apply<Ts...>;
 #endif
 }
-
+#if TICK_HAS_TEMPLATE_ALIAS
+#define TICK_USING(name, ...) using name = __VA_ARGS__
+#else
+#define TICK_USING(name, ...) struct name : __VA_ARGS__ {}
+#endif
 class ops : public tick::local_placeholders
 {
     struct private_type {};
     template<bool B>
-    struct private_enable_if
-    : std::enable_if<B, private_type>
-    {};
+    TICK_USING(private_enable_if, std::enable_if<B, private_type>);
+
     template<class T, class... Us> 
-    struct has_type_ : private_enable_if<detail::multi_match<T, Us...>::value> {};
+    TICK_USING(has_type_, private_enable_if<detail::multi_match<T, Us...>::value>);
     template<class T> 
-    struct is_true_ : private_enable_if<T::value> {};
+    TICK_USING(is_true_, private_enable_if<T::value>);
     template<class T> 
-    struct is_false_ : private_enable_if<not T::value> {};
+    TICK_USING(is_false_, private_enable_if<not T::value>);
     template<bool V> 
-    struct is_true_c_ : private_enable_if<V> {};
+    TICK_USING(is_true_c_, private_enable_if<V>);
     template<bool V> 
-    struct is_false_c_ : private_enable_if<not V> {};
+    TICK_USING(is_false_c_, private_enable_if<not V>);
 
 public:
 
@@ -216,8 +219,8 @@ public:
 
 
 #if TICK_HAS_TEMPLATE_ALIAS
-template<class... Ts>
-using has_type = typename has_type_<Ts...>::type; 
+template<class T, class... Ts>
+using has_type = typename has_type_<T, Ts...>::type; 
 
 template<class T>
 using is_true = typename is_true_<T>::type; 
