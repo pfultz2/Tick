@@ -9,7 +9,7 @@
 #define TICK_GUARD_INTEGRAL_CONSTANT_H
 
 #include <type_traits>
-
+#include <iso646.h>
 
 namespace tick {
 
@@ -53,6 +53,19 @@ operator op(U, integral_constant<T, v>) noexcept \
     return {}; \
 }
 
+#ifdef _MSC_VER
+#define TICK_INTEGRAL_CONSTANT_UNARY_PRIMITIVE_CAT(op, x) op ## x
+#define TICK_INTEGRAL_CONSTANT_UNARY_CAT(op, x) TICK_INTEGRAL_CONSTANT_UNARY_PRIMITIVE_CAT(op, x)
+#define TICK_INTEGRAL_CONSTANT_UNARY_OP_F TICK_INTEGRAL_CONSTANT_UNARY_CAT(op_, __LINE__)
+#define TICK_INTEGRAL_CONSTANT_UNARY_OP(op) \
+template<class T> constexpr T TICK_INTEGRAL_CONSTANT_UNARY_OP_F (T v) { return op v; } \
+template<class T, T v> \
+constexpr inline integral_constant<T, TICK_INTEGRAL_CONSTANT_UNARY_OP_F(v)> \
+operator op(integral_constant<T, v>) noexcept \
+{ \
+    return {}; \
+}
+#else
 #define TICK_INTEGRAL_CONSTANT_UNARY_OP(op) \
 template<class T, T v> \
 constexpr inline integral_constant<decltype(op v), (op v)> \
@@ -60,6 +73,7 @@ operator op(integral_constant<T, v>) noexcept \
 { \
     return {}; \
 }
+#endif
 
 TICK_INTEGRAL_CONSTANT_BINARY_OP(+)
 TICK_INTEGRAL_CONSTANT_BINARY_OP(-)
