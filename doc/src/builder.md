@@ -1,5 +1,5 @@
-Build traits using the TICK_TRAIT macro
-=======================================
+Building traits
+===============
 
 This macro will build a boolean type trait for you. Each trait has a `require` member function of the form:
 ```cpp
@@ -11,7 +11,18 @@ TICK_TRAIT(my_trait)
     >;
 };
 ```
-The parameters to the trait are based on the parameters passed to the `require` function. Then inside the `valid`, all the expressions are placed that will be check for. Each expression in `valid` needs a `decltype` around it. If one of the expressions is not valid, the the trait will return false. For example,
+
+This will essentially build a class that inherits from `integral_constant`, so the above is equivalent to this:
+
+```cpp
+template<class... Ts>
+struct my_trait
+: integral_constant<bool, (...)>
+{};
+```
+The parameters to the trait are based on the parameters passed to the `require` function. 
+
+The trait will be either true or false if the expressions given are valid. Each expression in `valid` needs a `decltype` around it. If one of the expressions is not valid, the the trait will return false. For example,
 ```cpp
 TICK_TRAIT(my_trait)
 {
@@ -53,6 +64,22 @@ TICK_TRAIT(is_equality_comparable,
 };
 ```
 This trait will be true when `x == y` and `x != y` are valid expressions and both `x` and `y` are default constructible.
+
+In addition `quote` can be used to pass all the args from the trait to the refinement:
+
+```cpp
+TICK_TRAIT(is_comparable, 
+    quote<is_equality_comparable>)
+{
+    template<class T, class U>
+    auto require(T&& x, U&& y) -> valid<
+        decltype(x < y),
+        decltype(x <= y),
+        decltype(x >= y),
+        decltype(x > y)
+    >;
+};
+```
 
 Query operations
 ================
@@ -102,6 +129,20 @@ TICK_TRAIT(is_incrementable)
     >;
 };
 ```
+
+Also, `returns<void>` is prohibited.
+
+```cpp
+TICK_TRAIT(is_incrementable)
+{
+    template<class T>
+    auto require(T&& x) -> valid<
+        decltype(returns<void>(x++)) // Compiler error
+    >;
+};
+```
+
+Instead, use either `decltype` directly without `returns`, or if there is a possibility of `void` from a computed type, use `TICK_RETURNS` or `has_type` instead.
 
 has_type
 --------
@@ -211,10 +252,25 @@ TICK_TRAIT(is_2d_array)
 };
 ```
 
+Helper functions
+----------------
+
+The library also provides `as_const` and `as_mutable` functions to ensure lvalues are either `const` or `mutable` respectively:
+
+```cpp
+TICK_TRAIT(is_copy_assignable)
+{
+    template<class T>
+    auto require(T&& x) -> valid<
+        decltype(x = as_const(x))
+    >;
+};
+```
+
 Build traits without macros
 ===========================
 
-The traits can be built using the `TICK_TRAIT` macros. Heres how to build them. First, build a class for the `require` functions and inherit from `tick::ops` to bring in all the query operations:
+The traits can be built without using the `TICK_TRAIT` macros. However, it may introduce problems with portability. So if only one platform is needed to be supported, then here's how to build them. First, build a class for the `require` functions and inherit from `tick::ops` to bring in all the query operations:
 ```cpp
 struct is_incrementable_r : tick::ops
 {
@@ -229,7 +285,7 @@ Next, turn it into a trait using `tick::models`:
 ```cpp
 template<class... Ts>
 struct is_incrementable
-: tick::models<is_incrementable_r(Ts...)>
+: tick::models<is_incrementable_r, Ts...>
 {};
 ```
 
