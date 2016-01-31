@@ -310,6 +310,12 @@ struct models<Trait, detail::no_check>
     typedef Trait type;
 };
 
+#ifdef _MSC_VER
+#define TICK_MSVC_CONSTRUCT(name) constexpr name() {}
+#else
+#define TICK_MSVC_CONSTRUCT(name)
+#endif
+
 #define TICK_TRAIT_REFINES(name, ...) \
 struct tick_private_trait_base_ ## name : tick::ops, tick::local_quote \
 { typedef tick::refines<__VA_ARGS__> type; }; \
@@ -317,7 +323,7 @@ struct tick_private_trait_ ## name; \
 template<class... T> \
 struct name \
 : tick::models<tick_private_trait_ ## name, T...> \
-{ constexpr name() {} }; \
+{ TICK_MSVC_CONSTRUCT(name) }; \
 struct tick_private_trait_ ## name \
 : tick::detail::base_requires, tick::ops, tick_private_trait_base_ ## name::type
 
