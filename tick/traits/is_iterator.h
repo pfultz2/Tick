@@ -24,20 +24,20 @@ namespace detail {
 // A trait to detect iterator traits, since it is not SFINAE friendly
 TICK_TRAIT(has_iterator_traits)
 {
-    template<class T,class Iterator=typename bare<T>::type>
-    auto require(T&&) -> valid<
+    template<class Iterator>
+    auto require(const Iterator&) -> valid<
         typename Iterator::difference_type,
         typename Iterator::value_type,
         typename Iterator::pointer,
         typename Iterator::reference,
         typename Iterator::iterator_category
     >;
-};
 
-template<class T>
-struct has_iterator_traits<T*>
-: true_type
-{};
+    // template<class T>
+    // auto require(T*x) -> valid<
+    //     decltype(*x)
+    // >;
+};
 
 }
 
@@ -45,7 +45,10 @@ template<class T, class=void>
 struct iterator_traits;
 
 template<class T>
-struct iterator_traits<T, TICK_CLASS_REQUIRES(detail::has_iterator_traits<T>())>
+struct iterator_traits<T, TICK_CLASS_REQUIRES(
+    std::is_pointer<typename bare<T>::type>() or
+    detail::has_iterator_traits<T>() 
+)>
 : std::iterator_traits<typename bare<T>::type>
 {};
 

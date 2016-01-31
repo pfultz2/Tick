@@ -44,6 +44,24 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT_CHECK(tick::is_random_access_iterator<std::vector<int>::const_iterator>);
     TICK_TRAIT_CHECK(tick::is_mutable_random_access_iterator<std::vector<int>::iterator>);
     static_assert(not tick::is_mutable_random_access_iterator<std::vector<int>::const_iterator>(), "Const iterator mutable");
+    
+    TICK_TRAIT_CHECK(tick::is_iterator<int*>);
+    TICK_TRAIT_CHECK(tick::is_input_iterator<int*>);
+    TICK_TRAIT_CHECK(tick::is_output_iterator<int*>);
+    TICK_TRAIT_CHECK(tick::is_forward_iterator<int*>);
+    TICK_TRAIT_CHECK(tick::is_bidirectional_iterator<int*>);
+    TICK_TRAIT_CHECK(tick::is_mutable_bidirectional_iterator<int*>);
+    TICK_TRAIT_CHECK(tick::is_mutable_random_access_iterator<int*>);
+    TICK_TRAIT_CHECK(tick::is_random_access_iterator<int*>);
+
+    TICK_TRAIT_CHECK(tick::is_iterator<char*>);
+    TICK_TRAIT_CHECK(tick::is_input_iterator<char*>);
+    TICK_TRAIT_CHECK(tick::is_output_iterator<char*>);
+    TICK_TRAIT_CHECK(tick::is_forward_iterator<char*>);
+    TICK_TRAIT_CHECK(tick::is_bidirectional_iterator<char*>);
+    TICK_TRAIT_CHECK(tick::is_mutable_bidirectional_iterator<char*>);
+    TICK_TRAIT_CHECK(tick::is_mutable_random_access_iterator<char*>);
+    TICK_TRAIT_CHECK(tick::is_random_access_iterator<char*>);
 
     TICK_TRAIT_CHECK(tick::is_value_swappable<std::vector<int>::iterator>);
     TICK_TRAIT_CHECK(tick::is_value_swappable<std::list<int>::iterator>);
@@ -66,6 +84,7 @@ TICK_STATIC_TEST_CASE()
     TICK_TRAIT_CHECK(tick::is_container<std::list<int>>);
     TICK_TRAIT_CHECK(tick::is_container<std::set<int>>);
     TICK_TRAIT_CHECK(tick::is_container<std::map<int, int>>);
+    TICK_TRAIT_CHECK(tick::is_container<std::string>);
 
     TICK_TRAIT_CHECK(tick::is_reversible_container<std::vector<int>>);
     TICK_TRAIT_CHECK(tick::is_reversible_container<std::list<int>>);
