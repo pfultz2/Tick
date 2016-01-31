@@ -41,12 +41,6 @@ struct no_check {};
 template<class T>
 struct id { typedef T type; };
 
-template<class T1 = void, class T2 = void, class T3 = void, class T4 = void, class T5 = void>
-struct holder
-{
-    typedef void type;
-};
-
 template<template<class...> class... Templates>
 struct template_holder
 {
@@ -323,7 +317,7 @@ struct tick_private_trait_ ## name; \
 template<class... T> \
 struct name \
 : tick::models<tick_private_trait_ ## name, T...> \
-{}; \
+{ constexpr name() {} }; \
 struct tick_private_trait_ ## name \
 : tick::detail::base_requires, tick::ops, tick_private_trait_base_ ## name::type
 

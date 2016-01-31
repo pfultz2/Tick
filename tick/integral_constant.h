@@ -14,15 +14,36 @@
 namespace tick {
 
 namespace detail {
-struct integral_constant_base {};
+// struct integral_constant_base {};
+
+template<class... Ts>
+struct holder
+{
+    typedef void type;
+};
+
+template<class T, class=void>
+struct is_integral_constant
+: std::false_type
+{};
+
+template<class T>
+struct is_integral_constant<T, typename holder<
+    typename T::tick_integral_constant_tag
+>::type>
+: std::true_type
+{};
+
 }
 
 template<class T, T v>
 struct integral_constant
-: std::integral_constant<T, v>, detail::integral_constant_base
+: std::integral_constant<T, v>
 {
     constexpr integral_constant()
     {}
+
+    typedef void tick_integral_constant_tag;
 
     template<class X, typename std::enable_if<(
         std::is_same<T, typename X::value_type>::value and X::value == v
@@ -30,6 +51,7 @@ struct integral_constant
     constexpr integral_constant(X)
     {}
 
+    constexpr operator T() const noexcept { return v; }
     constexpr T operator()() const noexcept { return v; }
 };
 
@@ -40,13 +62,13 @@ operator op(integral_constant<T, v>, integral_constant<U, w>) noexcept \
 { \
     return {}; \
 } \
-template<class T, T v, class U, class=typename std::enable_if<!std::is_base_of<detail::integral_constant_base, U>::value>::type> \
+template<class T, T v, class U, class=typename std::enable_if<!detail::is_integral_constant<U>::value>::type> \
 constexpr inline integral_constant<decltype(v op U::value), (v op U::value)> \
 operator op(integral_constant<T, v>, U) noexcept \
 { \
     return {}; \
 } \
-template<class T, T v, class U, class=typename std::enable_if<!std::is_base_of<detail::integral_constant_base, U>::value>::type> \
+template<class T, T v, class U, class=typename std::enable_if<!detail::is_integral_constant<U>::value>::type> \
 constexpr inline integral_constant<decltype(U::value op v), (U::value op v)> \
 operator op(U, integral_constant<T, v>) noexcept \
 { \
@@ -54,9 +76,9 @@ operator op(U, integral_constant<T, v>) noexcept \
 }
 
 #ifdef _MSC_VER
-#define TICK_INTEGRAL_CONSTANT_UNARY_PRIMITIVE_CAT(op, x) op ## x
-#define TICK_INTEGRAL_CONSTANT_UNARY_CAT(op, x) TICK_INTEGRAL_CONSTANT_UNARY_PRIMITIVE_CAT(op, x)
-#define TICK_INTEGRAL_CONSTANT_UNARY_OP_F TICK_INTEGRAL_CONSTANT_UNARY_CAT(op_, __LINE__)
+#define TICK_MVC_PRIMITIVE_CAT(op, x) op ## x
+#define TICK_MSVC_CAT(op, x) TICK_MVC_PRIMITIVE_CAT(op, x)
+#define TICK_INTEGRAL_CONSTANT_UNARY_OP_F TICK_MSVC_CAT(op_, __LINE__)
 #define TICK_INTEGRAL_CONSTANT_UNARY_OP(op) \
 template<class T> constexpr T TICK_INTEGRAL_CONSTANT_UNARY_OP_F (T v) { return op v; } \
 template<class T, T v> \

@@ -38,6 +38,16 @@ struct as_integral_constant
     typedef integral_constant<typename result_type::value_type, result_type::value> type;
 };
 
+template<bool B>
+struct requires_bool
+{
+    static const bool value = B;
+};
+
+template<class T, long N>
+struct requires_unwrap
+: T
+{};
 }
 
 template<template<class...> class Trait, class... Ts>
@@ -46,14 +56,32 @@ trait(Ts&&...) noexcept
 {
     return typename detail::as_integral_constant<Trait, Ts...>::type();
 }
+
 }
 
+#ifdef _MSC_VER
+#define TICK_REQUIRES_BOOL(...) tick::detail::requires_unwrap<decltype(tick::detail::requires_bool<(__VA_ARGS__)>{}), __LINE__>::value
+#else
+#define TICK_REQUIRES_BOOL(...) (__VA_ARGS__)
+#endif
+
 #define TICK_ERROR_PARENTHESIS_MUST_BE_PLACED_AROUND_THE_RETURN_TYPE(...) __VA_ARGS__>::type
-#define TICK_FUNCTION_REQUIRES(...) typename std::enable_if<(__VA_ARGS__), TICK_ERROR_PARENTHESIS_MUST_BE_PLACED_AROUND_THE_RETURN_TYPE
+#define TICK_FUNCTION_REQUIRES(...) typename std::enable_if<TICK_REQUIRES_BOOL(__VA_ARGS__), TICK_ERROR_PARENTHESIS_MUST_BE_PLACED_AROUND_THE_RETURN_TYPE
 
-#define TICK_CLASS_REQUIRES(...) typename std::enable_if<(__VA_ARGS__)>::type
+#define TICK_CLASS_REQUIRES(...) typename std::enable_if<TICK_REQUIRES_BOOL(__VA_ARGS__)>::type
 
-#define TICK_REQUIRES(...) bool TickPrivateBool ## __LINE__=true, typename std::enable_if<(TickPrivateBool##__LINE__ && __VA_ARGS__), int>::type = 0
+
+#ifdef _MSC_VER
+#define TICK_REQUIRES(...) \
+typename tick::detail::private_enum<__LINE__>::type TICK_MSVC_CAT(TickPrivateEnum, __LINE__) = tick::detail::private_enum<__LINE__>::type::na, \
+bool TICK_MSVC_CAT(TickPrivateBool, __LINE__)=true, \
+class=typename std::enable_if<(TICK_MSVC_CAT(TickPrivateBool, __LINE__) && TICK_REQUIRES_BOOL(__VA_ARGS__))>::type
+#else
+#define TICK_REQUIRES(...) \
+bool TickPrivateBool ## __LINE__=true, \
+typename std::enable_if<(TickPrivateBool##__LINE__ && TICK_REQUIRES_BOOL(__VA_ARGS__)), int>::type = 0
+
+#endif
 
 #define TICK_MEMBER_REQUIRES(...) template<TICK_REQUIRES(__VA_ARGS__)>
 
