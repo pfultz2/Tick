@@ -66,6 +66,19 @@ template<>
 struct fast_and<>
 : tick::true_type
 {};
+
+template<class... Ts>
+struct fast_or;
+
+template<class T, class... Ts>
+struct fast_or<T, Ts...>
+: tick::integral_constant<bool, (T::value || fast_or<Ts...>::value)>
+{};
+
+template<>
+struct fast_or<>
+: tick::true_type
+{};
 #else
 template<bool...> struct bool_seq {};
 template<class... Traits>
@@ -74,6 +87,16 @@ struct fast_and
     std::is_same<
         detail::bool_seq<Traits::value...>, 
         detail::bool_seq<(Traits::value, true)...>
+    >::type::value
+>
+{};
+
+template<class... Traits>
+struct fast_or
+: tick::integral_constant<bool, 
+    std::is_same<
+        detail::bool_seq<Traits::value...>, 
+        detail::bool_seq<(Traits::value && false)...>
     >::type::value
 >
 {};
@@ -115,11 +138,11 @@ struct multi_match
 : fast_and<matches<T, Us>...>
 {};
 
-template<class T, class U>
+template<class T, class... Us>
 struct return_matches
-: detail::matches<U,T>
+: fast_and<matches<T, Us>...>
 {
-    static_assert(!detail::is_void<T>::value, 
+    static_assert(!fast_or<detail::is_void<Us>...>::value, 
         "Void can't be used for returns. "
         "Checking for void on returns will always be false when the expression is void as well. "
         "Use TICK_RETURNS or has_type instead. "
@@ -252,7 +275,7 @@ public:
 
     template<class... Ts, class U>
     static auto returns(U &&) ->
-        typename std::enable_if<tick::detail::multi_match<U, Ts...>::value, int>::type;
+        typename std::enable_if<tick::detail::return_matches<U, Ts...>::value, int>::type;
 
 #define TICK_RETURNS(expr, ...) has_type<decltype(expr), __VA_ARGS__>
 
