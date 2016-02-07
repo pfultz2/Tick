@@ -18,6 +18,30 @@ constexpr T as_bool()
 
 TICK_STATIC_TEST_CASE()
 {
+    struct foo_int
+    {
+        typedef int type;
+    };
+
+    struct foo_void
+    {
+        typedef void type;
+    };
+
+    TICK_TRAIT(has_int_type)
+    {
+        template<class T>
+        auto require(const T&) -> valid<
+            has_type<typename T::type, int>
+        >;
+    };
+
+    static_assert(as_bool<has_int_type<foo_int>>(), "Failed has_type");
+    static_assert(!as_bool<has_int_type<foo_void>>(), "Failed has_type");
+};
+
+TICK_STATIC_TEST_CASE()
+{
 
     TICK_TRAIT(has_foo_member)
     {
@@ -31,7 +55,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T&& x) -> valid<
-            TICK_IS_TRUE(has_foo_member<T>)
+            is_true<has_foo_member<T>>
         >;
     };
 
@@ -122,7 +146,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T&& x) -> valid<
-            TICK_IS_TRUE(has_foo_bar_member<T>)
+            is_true<has_foo_bar_member<T>>
         >;
     };
 
@@ -299,7 +323,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_HAS_TYPE(T::type, int)
+            has_type<typename T::type, int>
         >;
     };
 
@@ -307,7 +331,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_HAS_TYPE(T::type, std::is_integral<_>)
+            has_type<typename T::type, std::is_integral<_>>
         >;
     };
 
@@ -315,7 +339,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_HAS_TYPE(T::type)
+            has_type<typename T::type>
         >;
     };
 
@@ -612,7 +636,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_IS_TRUE(std::is_integral<T>)
+            is_true<std::is_integral<T>>
         >;
     };
 
@@ -630,7 +654,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_IS_TRUE_C(std::is_integral<T>::value)
+            is_true_c<std::is_integral<T>::value>
         >;
     };
 

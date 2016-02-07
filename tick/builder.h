@@ -32,6 +32,12 @@
 #   endif
 #endif
 
+#if TICK_HAS_TEMPLATE_ALIAS
+#define TICK_USING(name, ...) using name = __VA_ARGS__
+#else
+#define TICK_USING(name, ...) struct name : __VA_ARGS__ {}
+#endif
+
 namespace tick {
 
 namespace detail {
@@ -162,6 +168,29 @@ struct apply_refinements
 {
     typedef typename refine_traits<Trait>::template apply<Ts...> type;
 };
+struct evaluatable {};
+
+#if TICK_HAS_TEMPLATE_ALIAS
+#define TICK_LAZY_EVAL_EXPR(...) decltype(__VA_ARGS__)
+#define TICK_EVAL_USING(name, ...) using name = typename __VA_ARGS__::type
+#else
+#define TICK_EVAL_USING(name, ...) struct name : tick::detail::lazy<__VA_ARGS__> {}
+
+template<class T>
+struct lazy
+: evaluatable, T
+{};
+
+template<class T>
+struct lazy_eval
+: std::conditional<std::is_base_of<evaluatable, T>::value,
+    T,
+    id<T>
+>::type
+{};
+
+#define TICK_LAZY_EVAL_EXPR(...) typename tick::detail::lazy_eval<decltype(__VA_ARGS__)>::type
+#endif
 
 template<class...Ts>
 auto models_(any) -> false_type;
@@ -169,19 +198,15 @@ auto models_(any) -> false_type;
 #if TICK_LEGACY_GCC
 template<class...Ts, class Trait>
 auto models_(Trait &&) -> typename apply_refinements<
-    decltype(std::declval<Trait>().template require<Ts...>(std::declval<Ts>()...)), 
+    TICK_LAZY_EVAL_EXPR(std::declval<Trait>().template require<Ts...>(std::declval<Ts>()...)), 
     Trait, Ts...>::type;
 #else
 template<class...Ts, class Trait,
-    class = decltype(std::declval<Trait>().template require<Ts...>(std::declval<Ts>()...))>
+    class = TICK_LAZY_EVAL_EXPR(std::declval<Trait>().template require<Ts...>(std::declval<Ts>()...))>
 auto models_(Trait &&) -> typename refine_traits<Trait>::template apply<Ts...>;
 #endif
 }
-#if TICK_HAS_TEMPLATE_ALIAS
-#define TICK_USING(name, ...) using name = __VA_ARGS__
-#else
-#define TICK_USING(name, ...) struct name : __VA_ARGS__ {}
-#endif
+
 class ops : public tick::local_placeholders
 {
     struct private_type {};
@@ -200,62 +225,59 @@ class ops : public tick::local_placeholders
     TICK_USING(is_false_c_, private_enable_if<not V>);
 
 public:
-
+#if TICK_HAS_TEMPLATE_ALIAS
     template<class...>
     struct valid {};
+#else
+    template<class... Ts>
+    struct valid;
+    template<class T, class=void>
+    struct valid_expr 
+    : detail::evaluatable    
+    {};
+    template<class... Ts>
+    struct valid_expr<valid<Ts...>, typename detail::holder<
+        typename detail::lazy_eval<Ts>::type...
+    >::type>
+    : detail::evaluatable
+    {
+        typedef valid<Ts...> type;
+    };
+
+    template<class... Ts>
+    struct valid
+    : valid_expr<valid<Ts...>>
+    {};
+#endif
 
     template<class... Ts, class U>
     static auto returns(U &&) ->
         typename std::enable_if<tick::detail::multi_match<U, Ts...>::value, int>::type;
 
-// A macro to provide better compatibility for gcc 4.6
-#define TICK_RETURNS(expr, ...) typename std::enable_if<tick::detail::multi_match<decltype(expr),__VA_ARGS__>::value, int>::type
+#define TICK_RETURNS(expr, ...) has_type<decltype(expr), __VA_ARGS__>
 
-
-#if TICK_HAS_TEMPLATE_ALIAS
 template<class T, class... Ts>
-using has_type = typename has_type_<T, Ts...>::type; 
+TICK_EVAL_USING(has_type, has_type_<T, Ts...>);
 
 template<class T>
-using is_true = typename is_true_<T>::type; 
+TICK_EVAL_USING(is_true, is_true_<T>);
 
 template<class T>
-using is_false = typename is_false_<T>::type; 
+TICK_EVAL_USING(is_false, is_false_<T>);
 
 template<bool V>
-using is_true_c = typename is_true_c_<V>::type; 
+TICK_EVAL_USING(is_true_c, is_true_c_<V>);
 
 template<bool V>
-using is_false_c = typename is_false_c_<V>::type; 
+TICK_EVAL_USING(is_false_c, is_false_c_<V>);
 
+
+// Deprecated macros
 #define TICK_HAS_TYPE(...) has_type<typename __VA_ARGS__>
 #define TICK_IS_TRUE(...) is_true<__VA_ARGS__>
 #define TICK_IS_FALSE(...) is_false<__VA_ARGS__>
 #define TICK_IS_TRUE_C(...) is_true_c<(__VA_ARGS__)>
 #define TICK_IS_FALSE_C(...) is_false_c<(__VA_ARGS__)>
-#else
-
-template<class T, class... Us>
-static typename has_type_<T, Us...>::type has_type(void);
-
-template<class T, class Enable=typename is_true_<T>::type>
-struct is_true {}; 
-
-template<class T, class Enable=typename is_false_<T>::type>
-struct is_false {}; 
-
-template<bool V, class Enable=typename is_true_c_<V>::type>
-struct is_true_c {}; 
-
-template<bool V, class Enable=typename is_false_c_<V>::type>
-struct is_false_c {}; 
-
-#define TICK_HAS_TYPE(...) decltype(has_type<typename __VA_ARGS__>())
-#define TICK_IS_TRUE(...) decltype(is_true<__VA_ARGS__>())
-#define TICK_IS_FALSE(...) decltype(is_false<__VA_ARGS__>())
-#define TICK_IS_TRUE_C(...) decltype(is_true_c<(__VA_ARGS__)>())
-#define TICK_IS_FALSE_C(...) decltype(is_false_c<(__VA_ARGS__)>())
-#endif
 
 
     template<template<class...> class Template>
