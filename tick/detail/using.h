@@ -20,7 +20,7 @@
 
 
 #ifndef TICK_HAS_TEMPLATE_ALIAS
-#   if TICK_LEGACY_GCC
+#   if defined (__GNUC__) && !defined (__clang__) && __GNUC__ == 4 && __GNUC_MINOR__ < 8
 #       define TICK_HAS_TEMPLATE_ALIAS 0
 #   else
 #       define TICK_HAS_TEMPLATE_ALIAS 1
