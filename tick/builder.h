@@ -10,33 +10,8 @@
 
 #include <tick/detail/matches.h>
 #include <tick/detail/pp.h>
+#include <tick/detail/using.h>
 #include <tick/integral_constant.h>
-
-
-#if defined (__GNUC__) && !defined (__clang__)
-#    if __GNUC__ == 4 && __GNUC_MINOR__ < 7
-#        define TICK_LEGACY_GCC 1
-#    else
-#        define TICK_LEGACY_GCC 0
-#    endif
-#else
-#define TICK_LEGACY_GCC 0
-#endif
-
-
-#ifndef TICK_HAS_TEMPLATE_ALIAS
-#   if TICK_LEGACY_GCC
-#       define TICK_HAS_TEMPLATE_ALIAS 0
-#   else
-#       define TICK_HAS_TEMPLATE_ALIAS 1
-#   endif
-#endif
-
-#if TICK_HAS_TEMPLATE_ALIAS
-#define TICK_USING(name, ...) using name = __VA_ARGS__
-#else
-#define TICK_USING(name, ...) struct name : __VA_ARGS__ {}
-#endif
 
 namespace tick {
 
@@ -82,30 +57,24 @@ struct fast_or<>
 #else
 template<bool...> struct bool_seq {};
 template<class... Traits>
-struct fast_and
-: tick::integral_constant<bool, 
+TICK_USING(fast_and, bool_<
     std::is_same<
         detail::bool_seq<Traits::value...>, 
         detail::bool_seq<(Traits::value, true)...>
     >::type::value
->
-{};
+>);
 
 template<class... Traits>
-struct fast_or
-: tick::integral_constant<bool, 
+TICK_USING(fast_or, bool_<
     std::is_same<
         detail::bool_seq<Traits::value...>, 
         detail::bool_seq<(Traits::value && false)...>
     >::type::value
->
-{};
+>);
 #endif
 
 template<class T>
-struct bare
-: std::remove_cv<typename std::remove_reference<T>::type>
-{};
+TICK_USING(bare, std::remove_cv<typename std::remove_reference<T>::type>);
 
 template<class T>
 struct is_void
@@ -134,9 +103,7 @@ struct always_false
 {};
 
 template<class T, class... Us>
-struct multi_match
-: fast_and<matches<T, Us>...>
-{};
+TICK_USING(multi_match, fast_and<matches<T, Us>...>);
 
 template<class T, class... Us>
 struct return_matches
@@ -159,22 +126,15 @@ struct base_traits
 template<class T, class Enable=void>
 struct refine_traits
 {
-    template<class... Ts>
-    struct apply
-    : base_traits<>
-    {
-    };
+    template<class...>
+    TICK_USING(apply, base_traits<>);
 };
 
 template<class T>
 struct refine_traits<T, typename detail::holder<typename T::tick_trait_base_apply_type>::type>
 {
     template<class... Ts>
-    struct apply
-    : T::template tick_trait_base_apply<Ts...>
-    {
-
-    };
+    TICK_USING(apply, typename T::template tick_trait_base_apply<Ts...>);
 };
 
 struct any

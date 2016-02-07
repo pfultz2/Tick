@@ -8,6 +8,7 @@
 #ifndef TICK_GUARD_INTEGRAL_CONSTANT_H
 #define TICK_GUARD_INTEGRAL_CONSTANT_H
 
+#include <tick/detail/using.h>
 #include <type_traits>
 #include <iso646.h>
 
@@ -123,6 +124,18 @@ TICK_INTEGRAL_CONSTANT_UNARY_OP(-)
 
 typedef integral_constant<bool, true> true_type;
 typedef integral_constant<bool, false> false_type;
+
+template<bool V>
+TICK_USING(bool_, integral_constant<bool, V>);
+
+template<int V>
+TICK_USING(int_, integral_constant<int, V>);
+
+template<long V>
+TICK_USING(long_, integral_constant<long, V>);
+
+template<std::size_t V>
+TICK_USING(size_t, integral_constant<std::size_t, V>);
 
 }
 
