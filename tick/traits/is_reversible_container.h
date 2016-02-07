@@ -17,8 +17,8 @@ TICK_TRAIT(is_reversible_container, is_container<_>)
 {
     template<class T>
     auto require(const T& x) -> valid<
-        TICK_HAS_TYPE(T::reverse_iterator, is_iterator<_>),
-        TICK_HAS_TYPE(T::const_reverse_iterator, is_iterator<_>),
+        has_type<typename T::reverse_iterator, is_iterator<_>>,
+        has_type<typename T::const_reverse_iterator, is_iterator<_>>,
         TICK_RETURNS(x.crbegin(), typename T::const_reverse_iterator),
         TICK_RETURNS(x.crend(), typename T::const_reverse_iterator),
         TICK_RETURNS(x.rbegin(), typename T::const_reverse_iterator),

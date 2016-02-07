@@ -19,7 +19,7 @@ TICK_TRAIT(is_copy_insertable,
 {
     template<class C, class T>
     auto require(const C&, const T&) -> valid<
-        TICK_IS_TRUE(is_emplace_constructible<C, T, T>)
+        is_true<is_emplace_constructible<C, T, T>>
     >;
 };
 

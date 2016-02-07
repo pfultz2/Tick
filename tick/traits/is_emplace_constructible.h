@@ -18,7 +18,7 @@ TICK_TRAIT(is_emplace_constructible)
 {
     template<class C, class T, class... Ts>
     auto require(const C& c, const T&, Ts&&...) -> valid<
-        TICK_HAS_TYPE(C::allocator_type, is_allocator<_>),
+        has_type<typename C::allocator_type, is_allocator<_>>,
         TICK_RETURNS(c.get_allocator(), typename C::allocator_type),
         decltype(
 // Allocator traits construct is not supported on gcc 4.7 and earlier

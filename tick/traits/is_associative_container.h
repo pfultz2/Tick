@@ -18,9 +18,9 @@ TICK_TRAIT(is_associative_container, is_container<_>)
 {
     template<class T>
     auto require(const T& x) -> valid<
-        TICK_HAS_TYPE(T::key_type, is_destructible<_>),
-        TICK_HAS_TYPE(T::key_compare, is_compare<_, typename T::key_type>),
-        TICK_HAS_TYPE(T::value_compare, is_compare<_, typename T::value_type>),
+        has_type<typename T::key_type, is_destructible<_>>,
+        has_type<typename T::key_compare, is_compare<_, typename T::key_type>>,
+        has_type<typename T::value_compare, is_compare<_, typename T::value_type>>,
         TICK_RETURNS(x.key_comp(), typename T::key_compare),
         TICK_RETURNS(x.value_comp(), typename T::value_compare)
     >;

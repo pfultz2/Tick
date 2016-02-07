@@ -48,7 +48,7 @@ TICK_TRAIT(is_value_swappable, is_iterator<_>)
 {
     template<class T>
     auto require(T&&) -> valid<
-        TICK_IS_TRUE(is_swappable<typename iterator_traits<T>::value_type>)
+        is_true<is_swappable<typename iterator_traits<T>::value_type>>
     >;
 };
 

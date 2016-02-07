@@ -708,7 +708,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_IS_FALSE(std::is_integral<T>)
+            is_false<std::is_integral<T>>
         >;
 
     };
@@ -726,7 +726,7 @@ TICK_STATIC_TEST_CASE()
     {
         template<class T>
         auto require(T) -> valid<
-            TICK_IS_FALSE_C(std::is_integral<T>::value)
+            is_false_c<std::is_integral<T>::value>
         >;
 
     };

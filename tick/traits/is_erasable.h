@@ -18,7 +18,7 @@ TICK_TRAIT(is_erasable)
 {
     template<class C, class T>
     auto require(const C&, const T&) -> valid<
-        TICK_HAS_TYPE(C::allocator_type, is_allocator<_>),
+        has_type<typename C::allocator_type, is_allocator<_>>,
         TICK_RETURNS(C::get_allocator(), typename C::allocator_type&),
         decltype(
 // Gcc 4.6 doesn't have allocator traits

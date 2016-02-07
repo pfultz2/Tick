@@ -26,7 +26,7 @@ TICK_TRAIT(is_copy_insertable_container)
 {
     template<class T>
     auto require(const T& x) -> valid<
-        TICK_IS_TRUE(is_copy_insertable<T, typename T::value_type>)
+        is_true<is_copy_insertable<T, typename T::value_type>>
     >;
 };
 
@@ -46,13 +46,13 @@ TICK_TRAIT(is_container,
 {
     template<class T>
     auto require(const T& x) -> valid<
-        TICK_HAS_TYPE(T::iterator, is_iterator<_>),
-        TICK_HAS_TYPE(T::const_iterator, is_iterator<_>),
-        TICK_HAS_TYPE(T::value_type),
-        TICK_HAS_TYPE(T::reference, typename T::value_type&),
-        TICK_HAS_TYPE(T::const_reference, const typename T::value_type&),
-        TICK_HAS_TYPE(T::difference_type, int),
-        TICK_HAS_TYPE(T::size_type, unsigned),
+        has_type<typename T::iterator, is_iterator<_>>,
+        has_type<typename T::const_iterator, is_iterator<_>>,
+        has_type<typename T::value_type>,
+        has_type<typename T::reference, typename T::value_type&>,
+        has_type<typename T::const_reference, const typename T::value_type&>,
+        has_type<typename T::difference_type, int>,
+        has_type<typename T::size_type, unsigned>,
         TICK_RETURNS(x.size(), typename T::size_type),
         TICK_RETURNS(x.max_size(), typename T::size_type),
         TICK_RETURNS(x.empty(), bool)
