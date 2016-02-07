@@ -9,6 +9,7 @@
 #define TICK_DETAIL_GUARD_MATCHES_H
 
 #include <tick/placeholders.h>
+#include <tick/detail/using.h>
 #include <tuple>
 
 namespace tick { namespace detail {
@@ -142,9 +143,7 @@ struct match_impl<T, void, void>
 {};
 
 template<class T, class U>
-struct matches
-: match_impl<T, U, typename replace_args<U, T>::type>
-{};
+TICK_USING(matches, match_impl<T, U, typename replace_args<U, T>::type>);
 
 }}
 
