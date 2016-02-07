@@ -181,27 +181,6 @@ TICK_TRAIT(has_nested_int_type)
 ```
 This trait will be true if `T` has a nested type called `type` which is an integral type.
 
-Note: For older compilers such as gcc 4.6 the `has_type` has to be used inside of a `decltype`, like this:
-```cpp
-TICK_TRAIT(has_nested_int_type)
-{
-    template<class T>
-    auto require(const T& x) -> valid<
-        decltype(has_type<typename T::type, std::is_integral<_>>())
-    >;
-};
-```
-Also, a `TICK_HAS_TYPE` macro is provided as well, which takes care of wrapping it in a `decltype`:
-```cpp
-TICK_TRAIT(has_nested_int_type)
-{
-    template<class T>
-    auto require(const T& x) -> valid<
-        TICK_HAS_TYPE(T::type, std::is_integral<_>>)
-    >;
-};
-```
-
 has_template
 ------------
 
@@ -227,27 +206,6 @@ TICK_TRAIT(is_2d_array)
     template<class T>
     auto require(const T& x) -> valid<
         is_true<std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >
-    >;
-};
-```
-
-Note: For older compilers such as gcc 4.6 the `is_true` has to be used inside of a `decltype`, like this:
-```cpp
-TICK_TRAIT(is_2d_array)
-{
-    template<class T>
-    auto require(const T& x) -> valid<
-        decltype(is_true<std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >())
-    >;
-};
-```
-Also the macros `TICK_IS_TRUE` and `TICK_IS_FALSE` are provided as well,  which takes care of wrapping it in a `decltype`:
-```cpp
-TICK_TRAIT(is_2d_array)
-{
-    template<class T>
-    auto require(const T& x) -> valid<
-        TICK_IS_TRUE(std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 2>> >)
     >;
 };
 ```
