@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 2.8)
 project (Tick)
  
 # The version number.
@@ -9,7 +9,10 @@ include(CheckCXXCompilerFlag)
 enable_language(CXX)
 
 if(CMAKE_HOST_APPLE)
-    list(APPEND CXX_EXTRA_FLAGS -stdlib=libc++)
+  check_cxx_compiler_flag("-stdlib=libc++" COMPILER_HAS_CXX_FLAG_libcxx)
+  if(COMPILER_HAS_CXX_FLAG_libcxx)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+  endif()
 endif()
 
 set(ENABLE_CXXFLAGS_TO_CHECK 
@@ -25,30 +28,17 @@ foreach(flag ${ENABLE_CXXFLAGS_TO_CHECK})
     string(REPLACE "+" "x" flag_var ${flag_var})
     check_cxx_compiler_flag("${flag}" COMPILER_HAS_CXX_FLAG${flag_var})
     if(COMPILER_HAS_CXX_FLAG${flag_var})
-        list(APPEND CXX_EXTRA_FLAGS ${flag})
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}")
         break()
     endif()
 endforeach()
 
-install (DIRECTORY tick DESTINATION include)
-
-configure_file(tick.pc.in tick.pc)
-install(FILES tick.pc DESTINATION lib/pkgconfig)
-
-
-# Moved down, so everything above is common
-if (BIICODE) 
-    ADD_BII_TARGETS()
-    target_compile_options(${BII_LIB_TARGET} INTERFACE ${CXX_EXTRA_FLAGS})
-    return() #finish processing, no need to run cmake below
-endif()
 
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} -VV -C ${CMAKE_CFG_INTDIR})
 
 macro(add_test_executable TEST_NAME_)
     set(TEST_NAME "${TEST_NAME_}")
-    add_executable (${TEST_NAME} EXCLUDE_FROM_ALL test/${TEST_NAME}.cpp)
-    target_compile_options(${TEST_NAME} PUBLIC ${CXX_EXTRA_FLAGS})
+    add_executable (${TEST_NAME} EXCLUDE_FROM_ALL test/${TEST_NAME}.cpp ${ARGN})
     if(WIN32)
         add_test(NAME ${TEST_NAME} WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH} COMMAND ${TEST_NAME}${CMAKE_EXECUTABLE_SUFFIX})
     else()
@@ -60,6 +50,10 @@ endmacro(add_test_executable)
 
 include(CTest)
 
+install (DIRECTORY tick DESTINATION include)
+
+configure_file(tick.pc.in tick.pc)
+install(FILES tick.pc DESTINATION lib/pkgconfig)
 include_directories(.)
 
 add_test_executable(builder)
