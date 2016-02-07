@@ -16,17 +16,13 @@ template<template<class...> class F>
 struct quote 
 {
     template<class... Ts>
-    struct apply
-    : F<Ts...>
-    {};
+    TICK_USING(apply, F<Ts...>);
 };
 
 struct local_quote
 {
     template<template<class...> class F>
-    struct quote 
-    : tick::quote<F>
-    {};
+    TICK_USING(quote, tick::quote<F>);
 };
 
 template<int N>

@@ -74,12 +74,13 @@ struct replace_args_recursive<quote<F>, Replacer>
 {
     typedef typename Replacer::template quote<F>::type type;
 };
-
+#if !TICK_HAS_TEMPLATE_ALIAS
 template<template<class...> class F, class Replacer>
 struct replace_args_recursive<local_quote::quote<F>, Replacer>
 {
     typedef typename Replacer::template quote<F>::type type;
 };
+#endif
 
 template<class F, class Replacer>
 struct replace_args_impl
