@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Design Notes - Tick</title>
+
+        <link href="../css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="../index.html">Tick</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="../index.html">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../builder/index.html">Creating a Trait</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../requires/index.html">Template constraints</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../check/index.html">Checking a Trait</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../tag/index.html">Tag dispatching</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../requirements/index.html">Requirements</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../acknowledgments/index.html">Acknowledgments</a>
+</li>
+
+                        
+                            
+<li class="active">
+    <a href="index.html">Design Notes</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../zlang/index.html">ZLang</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="../license/index.html">License</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li >
+                        <a rel="next" href="../acknowledgments/index.html">
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../zlang/index.html">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a href="https://github.com/pfultz2/Tick">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#design-notes">Design Notes</a></li>
+        
+            <li><a href="#using-template-class">Using template class</a></li>
+        
+            <li><a href="#trait-based">Trait-based</a></li>
+        
+            <li><a href="#specializations">Specializations</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="design-notes">Design Notes</h1>
+<h2 id="using-template-class">Using template class</h2>
+<p>Tick uses a the <code>valid</code> template class to place valid expressions, because it provides a more robust solution. Ideally, using tick we could define the traits like this:</p>
+<pre><code>TICK_TRAIT(is_incrementable)
+{
+    template&lt;class T&gt;
+    auto require(T&amp;&amp; x) -&gt; decltype(
+        x++,
+        ++x
+    );
+};
+</code></pre>
+<p>However, if one of the expressions returns a type that overloads the comma operator in a strange way(rare but still possible), then the trait could fail(ie return false when it should be true). To fix it, we could add <code>void</code> casts like this:</p>
+<pre><code>TICK_TRAIT(is_incrementable)
+{
+    template&lt;class T&gt;
+    auto require(T&amp;&amp; x) -&gt; decltype(
+        (void)x++,
+        (void)++x
+    );
+};
+</code></pre>
+<p>However, the <code>void</code> casts can be easy to forget. Another solution to the problem could be to pass it to a function:</p>
+<pre><code>template&lt;class... Ts&gt;
+void valid_expr(T&amp;&amp;...);
+
+TICK_TRAIT(is_incrementable)
+{
+    template&lt;class T&gt;
+    auto require(T&amp;&amp; x) -&gt; decltype(valid_expr(
+        x++,
+        ++x
+    ));
+};
+</code></pre>
+<p>However, if one of the expressions returns <code>void</code>, then this will fail as well(ie return false when it should be true). So this could be fixed in a similiar way as well:</p>
+<pre><code>TICK_TRAIT(is_incrementable)
+{
+    template&lt;class T&gt;
+    auto require(T&amp;&amp; x) -&gt; decltype(valid_expr(
+        (x++, 1),
+        (++x, 1)
+    ));
+};
+</code></pre>
+<p>However, it can be easy to forget to put the <code>1</code> in there. So instead we use a <code>valid</code> template class, like this:</p>
+<pre><code>TICK_TRAIT(is_incrementable)
+{
+    template&lt;class T&gt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
+        decltype(x++),
+        decltype(++x)
+    &gt;;
+};
+</code></pre>
+<p>This requires placing each expression in a decltype, but if this was forgotten there would be a compile error pointing to the incorrect expression.</p>
+<h2 id="trait-based">Trait-based</h2>
+<p>The concept predicates in Tick are defined as regular type traits(ie they are integrel constants) instead of a <code>constexpr bool</code> function. They are almost functionally the same in use. However, as a trait, it allows for better flexibility and expressiveness, through higher-order programming. This is what enables passing the traits to other functions which can be used to match return types to traits as well as other types.</p>
+<h2 id="specializations">Specializations</h2>
+<p>All the traits created can be specialized by the user. This is very important. Since the definition of traits relies on duck typing, there are times that even though it may quack like a duck it is not a duck. So with specialization the user can clarify the type's capabilities.</p></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script>var base_url = '..';</script>
+        <script data-main="../mkdocs/js/search.js" src="../mkdocs/js/require.js"></script>
+        <script src="../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

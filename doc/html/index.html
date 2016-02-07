@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="./img/favicon.ico">
+
+	<title>Tick</title>
+
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link href="./css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="index.html">Tick</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li class="active">
+                        <a href="index.html">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="builder/index.html">Creating a Trait</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="requires/index.html">Template constraints</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="check/index.html">Checking a Trait</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="tag/index.html">Tag dispatching</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="requirements/index.html">Requirements</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="acknowledgments/index.html">Acknowledgments</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="design/index.html">Design Notes</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="zlang/index.html">ZLang</a>
+</li>
+
+                        
+                            
+<li >
+    <a href="license/index.html">License</a>
+</li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+            
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                
+                    <li class="disabled">
+                        <a rel="next" >
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="builder/index.html">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a href="https://github.com/pfultz2/Tick">
+                            
+                                <i class="fa fa-github"></i>
+                            
+                            GitHub
+                        </a>
+                    </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#tick">Tick</a></li>
+        
+    
+        <li class="main "><a href="#getting-started">Getting Started</a></li>
+        
+    
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="tick">Tick</h1>
+<p>Trait introspection and concept creator for C++11</p>
+<h1 id="getting-started">Getting Started</h1>
+<p>Tick provides a mechanism for easily defining and using traits in C++11. For example, if we defined a generic <code>increment</code> function, like this:</p>
+<pre><code class="cpp">template&lt;class T&gt;
+void increment(T&amp; x)
+{
+    x++;
+}
+</code></pre>
+
+<p>If we pass something that does not have the <code>++</code> operator to <code>increment</code>, we will get an error inside of the <code>increment</code> function. This can make it unclear whether the error is due to a mistake by the user of the function or by the implementor of the function. Instead we want to check the type requirements of the function. </p>
+<p>Using Tick we can create an <code>is_incrementable</code> trait, like this:</p>
+<pre><code class="cpp">TICK_TRAIT(is_incrementable)
+{
+    template&lt;class T&gt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
+        decltype(x++),
+        decltype(++x)
+    &gt;;
+};
+</code></pre>
+
+<p>And then we can use a simple requires clause in our function to check the type requirements:</p>
+<pre><code class="cpp">template&lt;class T, TICK_REQUIRES(is_incrementable&lt;T&gt;())&gt;
+void increment(T&amp; x)
+{
+    x++;
+}
+</code></pre>
+
+<p>So, now, if we pass something that is not incrementable to <code>increment</code>:</p>
+<pre><code class="cpp">struct foo {};
+
+foo f;
+increment(f);
+</code></pre>
+
+<p>Then we get an error like this in clang:</p>
+<pre><code>demo.cpp:25:2: error: no matching function for call to 'increment'
+        increment(f);
+        ^~~~~~~~~
+demo.cpp:14:19: note: candidate template ignored: disabled by 'enable_if' [with T = foo]
+template&lt;class T, TICK_REQUIRES(is_incrementable&lt;T&gt;())&gt;
+                  ^
+</code></pre>
+<p>This gives an error at the call to <code>increment</code> rather than inside the function, and then pointes to the type requirements of the function. This gives enough information for most commons cases, however, sometimes we may want more information. In that case the <code>TICK_TRAIT_CHECK</code> can be used. For example, say we had the <code>is_incrementable</code> trait defined like this:</p>
+<pre><code class="cpp">TICK_TRAIT(is_incrementable, std::is_integral&lt;_&gt;)
+{
+    template&lt;class T&gt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
+        decltype(x++),
+        decltype(++x)
+    &gt;;
+};
+</code></pre>
+
+<p>Then if we use <code>TICK_TRAIT_CHECK</code>, we can see why <code>int*</code> is not incrementable:</p>
+<pre><code class="cpp">TICK_TRAIT_CHECK(is_incrementable&lt;int*&gt;);
+</code></pre>
+
+<p>Which will produce this error:</p>
+<pre><code>../tick/trait_check.h:95:38: error: implicit instantiation of undefined template 'tick::TRAIT_CHECK_FAILURE&lt;std::is_integral&lt;int *&gt;, is_incrementable&lt;int *&gt; &gt;'
+</code></pre>
+<p>Which shows the traits that failed including any refinements. So we can see that it failed because <code>std::is_integral&lt;int *&gt;</code> is not true.</p></div>
+            
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+
+        <script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script>
+        <script>var base_url = '.';</script>
+        <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+        <script src="./js/base.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                        <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            From here you can search these documents. Enter
+                            your search terms below.
+                        </p>
+                        <form role="form">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                            </div>
+                        </form>
+                        <div id="mkdocs-search-results"></div>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 0.14.0
+Build Date UTC : 2016-02-07 06:51:14.117445
+-->
