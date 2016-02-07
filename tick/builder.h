@@ -134,7 +134,7 @@ template<class T>
 struct refine_traits<T, typename detail::holder<typename T::tick_trait_base_apply_type>::type>
 {
     template<class... Ts>
-    TICK_USING(apply, typename T::template tick_trait_base_apply<Ts...>);
+    TICK_USING_TYPENAME(apply, T::template tick_trait_base_apply<Ts...>);
 };
 
 struct any

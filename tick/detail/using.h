@@ -29,7 +29,9 @@
 
 #if TICK_HAS_TEMPLATE_ALIAS
 #define TICK_USING(name, ...) using name = __VA_ARGS__
+#define TICK_USING_TYPENAME(name, ...) using name = typename __VA_ARGS__
 #else
+#define TICK_USING_TYPENAME(name, ...) struct name : __VA_ARGS__ {}
 #define TICK_USING(name, ...) struct name : __VA_ARGS__ {}
 #endif
 
