@@ -103,7 +103,14 @@ struct always_false
 {};
 
 template<class T, class... Us>
-TICK_USING(multi_match, fast_and<matches<T, Us>...>);
+// Template alias only works on clang
+#ifdef __clang__
+using multi_match = fast_and<matches<T, Us>...>;
+#else
+struct multi_match
+: fast_and<matches<T, Us>...>
+{};
+#endif
 
 template<class T, class... Us>
 struct return_matches
