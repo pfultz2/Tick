@@ -53,7 +53,7 @@ include(CTest)
 install (DIRECTORY tick DESTINATION include)
 
 configure_file(tick.pc.in tick.pc)
-install(FILES tick.pc DESTINATION lib/pkgconfig)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tick.pc DESTINATION lib/pkgconfig)
 include_directories(.)
 
 add_test_executable(builder)
