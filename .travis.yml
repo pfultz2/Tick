@@ -136,10 +136,13 @@ install:
     - ls -lR ${DEPS_DIR}/usr
 
 script:
+    - export INSTALL_PREFIX_PATH="${TRAVIS_BUILD_DIR}/usr"
+    - mkdir -p "$INSTALL_PREFIX_PATH"
     - cd $CHECKOUT_PATH
     - if [ ! -d build ]; then mkdir build; fi
     - cd build
     - if [[ "$ASAN" == "on" ]]; then export CXXFLAGS="${CXXFLAGS} -fsanitize=address,undefined,integer -fno-omit-frame-pointer -fno-sanitize=unsigned-integer-overflow"; fi
-    - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE ..
+    - cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX_PATH ..
     - CTEST_OUTPUT_ON_FAILURE=1 CTEST_PARALLEL_LEVEL=2 make -j2 check VERBOSE=1
+    - make install
     - cd .. && rm -rf build/
