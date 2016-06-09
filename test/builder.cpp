@@ -43,6 +43,21 @@ TICK_STATIC_TEST_CASE()
 TICK_STATIC_TEST_CASE()
 {
 
+    TICK_TRAIT(is_simple_incrementable)
+    {
+        template<class T>
+        auto require(T&& x) -> valid<
+            decltype(returns<T>(x++))
+        >;
+    };
+
+    static_assert(is_simple_incrementable<int>::value, "Type is not incrementable");
+
+};
+
+TICK_STATIC_TEST_CASE()
+{
+
     TICK_TRAIT(has_foo_member)
     {
         template<class T>

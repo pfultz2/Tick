@@ -66,7 +66,7 @@ TICK_USING(fast_and, bool_<
 
 template<class... Traits>
 TICK_USING(fast_or, bool_<
-    std::is_same<
+    !std::is_same<
         detail::bool_seq<Traits::value...>, 
         detail::bool_seq<(Traits::value && false)...>
     >::type::value
@@ -78,7 +78,7 @@ TICK_USING(bare, std::remove_cv<typename std::remove_reference<T>::type>);
 
 template<class T>
 struct is_void
-: std::is_same<T, void>
+: std::is_void<T>
 {};
 
 template<class T>
