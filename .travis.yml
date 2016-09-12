@@ -192,8 +192,8 @@ script:
         done
       done
     - pkg-config tick --cflags
-    - cd include
+    # - cd include
     - HEADERS=$(echo tick/*.h)
-    - cd ..
+    # - cd ..
     - for file in $HEADERS; do echo -e "#include <$file>\nint main() {}" | $CXX -std=gnu++0x `pkg-config tick --cflags` -x c++ -S -; done
     - rm -rf "$INSTALL_PREFIX_PATH"
