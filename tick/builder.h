@@ -52,7 +52,7 @@ struct fast_or<T, Ts...>
 
 template<>
 struct fast_or<>
-: tick::true_type
+: tick::false_type
 {};
 #else
 template<bool...> struct bool_seq {};
