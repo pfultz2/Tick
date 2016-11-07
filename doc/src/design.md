@@ -4,7 +4,7 @@ Design Notes
 Using template class
 --------------------
 
-Tick uses a the `valid` template class to place valid expressions, because it provides a more robust solution. Ideally, using tick we could define the traits like this:
+Tick uses the `valid` template class to place valid expressions, because it provides a more robust solution. Ideally, using tick we could define the traits like this:
 
     TICK_TRAIT(is_incrementable)
     {

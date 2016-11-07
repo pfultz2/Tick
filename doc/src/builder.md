@@ -1,6 +1,9 @@
 Building traits
 ===============
 
+TICK_TRAIT
+----------
+
 This macro will build a boolean type trait for you. Each trait has a `require` member function of the form:
 ```cpp
 TICK_TRAIT(my_trait)
@@ -86,10 +89,7 @@ Query operations
 
 These can be used to query more information about the types then just valid expressions.
 
-Type matching
--------------
-
-When a type is matched, it can either be convertible to the type given, or the evaluated placeholder expression must be true. Placeholder expressions can be given so the type can be matched against other traits.
+When a type is matched in query operation, it can either be convertible to the type given, or the evaluated [placeholder expression](http://www.boost.org/doc/libs/1_55_0/libs/mpl/doc/refmanual/placeholder-expression.html) must be true. Placeholder expressions can be given so the type can be matched against other traits.
 
 
 returns
@@ -196,10 +196,10 @@ TICK_TRAIT(has_nested_result)
 ```
 This trait will be true if `T` has a nested template called `result`.
 
-Trait evaluation
-----------------
+is_true
+-------
 
-The `is_true` and `is_false` queries can check if a trait is true or false. Using refinements is the preferred way of checking for additional traits, but this can be useful if the evaluation of some trait can't be used lazily with placeholder expressions. So the `is_true` and `is_false` can be used instead, for example:
+The `is_true` query can check if a trait is true. Using [refinements](refinements) is the preferred way of checking for additional traits, but this can be useful if the evaluation of some trait can't be used lazily with [placeholder expression](http://www.boost.org/doc/libs/1_55_0/libs/mpl/doc/refmanual/placeholder-expression.html). So `is_true` can be used instead, for example:
 ```cpp
 TICK_TRAIT(is_2d_array)
 {
@@ -210,10 +210,24 @@ TICK_TRAIT(is_2d_array)
 };
 ```
 
-Helper functions
-----------------
+is_false
+--------
 
-The library also provides `as_const` and `as_mutable` functions to ensure lvalues are either `const` or `mutable` respectively:
+The `is_false` query can check if a trait is false. Using [refinements](refinements) is the preferred way of checking for additional traits, but this can be useful if the evaluation of some trait can't be used lazily with [placeholder expression](http://www.boost.org/doc/libs/1_55_0/libs/mpl/doc/refmanual/placeholder-expression.html). So `is_false` can be used instead, for example:
+```cpp
+TICK_TRAIT(is_multi_array)
+{
+    template<class T>
+    auto require(const T& x) -> valid<
+        is_false<std::is_same<std::rank<T>::type, std::integral_constant<std::size_t, 1>> >
+    >;
+};
+```
+
+as_const
+--------
+
+The `as_const` function helps ensure that lvalues are `const`.
 
 ```cpp
 TICK_TRAIT(is_copy_assignable)
@@ -221,6 +235,21 @@ TICK_TRAIT(is_copy_assignable)
     template<class T>
     auto require(T&& x) -> valid<
         decltype(x = as_const(x))
+    >;
+};
+```
+
+as_mutable
+----------
+
+The `as_mutable` function helps ensure that lvalues are treated as `mutable` or non-const.
+
+```cpp
+TICK_TRAIT(is_destructible)
+{
+    template<class T>
+    auto require(const T& x) -> valid<
+        decltype(as_mutable(x).~T())
     >;
 };
 ```
@@ -247,10 +276,10 @@ struct is_incrementable
 {};
 ```
 
-Refinements
------------
+refines
+-------
 
-Refinements can be used by using the `tick::refines` class:
+Refinements can be used by using the `refines` class:
 ```cpp
 struct is_incrementable_r 
 : tick::ops, tick::refines<std::is_default_constructible<tick::_>>

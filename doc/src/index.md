@@ -1,7 +1,3 @@
-Tick
-====
-
-Trait introspection and concept creator for C++11
 
 Getting Started
 ===============
