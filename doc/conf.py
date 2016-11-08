@@ -19,6 +19,7 @@
 import os
 from recommonmark.parser import CommonMarkParser
 from recommonmark.transform import AutoStructify
+from tabulate import tabulate
 import sphinx_boost
 # sys.path.insert(0, os.path.abspath('.'))
 
@@ -361,6 +362,43 @@ def insert_header(lines, f):
             yield "    #include <{0}>".format(f)
             yield ""
 
+def borders(line, s):
+    return line.startswith(s) and line.endswith(s)
+
+def is_table_line(line):
+    table_char = '+-='
+    return borders(line, '+') and all(c in table_char for c in line)
+
+def convert_table(lines):
+    headers = []
+    data = []
+    row = []
+    parse_table = False
+    for line in lines:
+        if not parse_table and is_table_line(line):
+            parse_table = True
+        elif parse_table: 
+            if is_table_line(line):
+                if '=' in line: headers = row
+                else: data.append(row)
+                row = []
+            elif borders(line, '|'):
+                r = [col.replace('`', '``').strip() for col in line.split('|') if len(col) > 0]
+                if len(row) > 0:
+                    row = [x + ' ' + y for x, y in zip(row, r)]
+                else:
+                    row = r
+            else:
+                parse_table = False
+                yield "```eval_rst"
+                yield tabulate(data, headers=headers, tablefmt="grid")
+                yield ""
+                yield "```"
+                yield ""
+        else:
+            yield line
+
+
 extract_prefix = '/// '
 # include_dir = os.path.abspath('../include/')
 include_dir = os.path.abspath('..')
@@ -369,7 +407,8 @@ def extract_doc(app, docname, source):
     if path.endswith('.h'):
         lines = source[0].split('\n')
         md = [line[len(extract_prefix):] for line in lines if line.startswith(extract_prefix)]
-        source[0] = '\n'.join(insert_header(md, os.path.relpath(path, include_dir)))
+        source[0] = '\n'.join(insert_header(convert_table(md), os.path.relpath(path, include_dir)))
+        print(source[0])
 
 # app setup hook
 def setup(app):

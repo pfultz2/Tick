@@ -24,10 +24,19 @@
 /// any object `t` of type `T`
 /// 
 /// 
-/// | Expression                     | Requirements                                                                                                                      |
-/// |--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
-/// | `using std::swap; swap(t, u);` | After the call, the value of t is the value held by u before the call, and the value of u is the value held by t before the call. |
-/// | `using std::swap; swap(u, t);` | After the call, the value of t is the value held by u before the call, and the value of u is the value held by t before the call. |
+/// +--------------------------------+------------------------------------------+
+/// | Expression                     | Requirements                             |
+/// +================================+==========================================+
+/// | `using std::swap; swap(t, u);` | After the call, the value of t is the    |
+/// |                                | value held by u before the call, and the |
+/// |                                | value of u is the value held by t before |
+/// |                                | the call.                                |
+/// +--------------------------------+------------------------------------------+
+/// | `using std::swap; swap(u, t);` | After the call, the value of t is the    |
+/// |                                | value held by u before the call, and the |
+/// |                                | value of u is the value held by t before |
+/// |                                | the call.                                |
+/// +--------------------------------+------------------------------------------+
 /// 
 /// Synopsis
 /// --------
