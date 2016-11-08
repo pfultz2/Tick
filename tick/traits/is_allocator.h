@@ -177,8 +177,8 @@
 ///     {
 ///         template<class A>
 ///         auto require(const A& a)-> valid<
-///             returns<is_nullable_pointer<_>, is_random_access_iterator<_>>(as_mutable(a).allocate(std::declval<std::size_t>()))
-///             returns<typename A::value_type&>(*(as_mutable(a).allocate(std::declval<std::size_t>())))
+///             decltype(returns<is_nullable_pointer<_>, is_random_access_iterator<_>>(as_mutable(a).allocate(std::declval<std::size_t>()))),
+///             decltype(returns<typename A::value_type&>(*(as_mutable(a).allocate(std::declval<std::size_t>()))))
 ///         >;
 ///     };
 /// 
