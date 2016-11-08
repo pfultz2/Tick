@@ -22,11 +22,11 @@
 /// 
 /// The type must meet all of the following requirements:
 /// 
-/// * is_equality_comparable
-/// * is_default_constructible
-/// * is_copy_constructible
-/// * is_copy_assignable
-/// * is_destructible
+/// * [`is_equality_comparable`](is_equality_comparable)
+/// * [`is_default_constructible`](is_default_constructible)
+/// * [`is_copy_constructible`](is_copy_constructible)
+/// * [`is_copy_assignable`](is_copy_assignable)
+/// * [`is_destructible`](is_destructible)
 /// 
 /// The type `T` must satisfy the following additional expressions, given two
 /// values `p` and `q` that are of type `T`, and that `np` is a value of

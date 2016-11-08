@@ -8,6 +8,58 @@
 #ifndef TICK_GUARD_IS_ITERATOR_H
 #define TICK_GUARD_IS_ITERATOR_H
 
+/// is_iterator
+/// ===========
+/// 
+/// Description
+/// -----------
+/// 
+/// An iterator can be used to identify and traverse the elements of a
+/// container.
+/// 
+/// Requirements
+/// ------------
+/// 
+/// The type `It` satisfies `is_iterator` if
+/// 
+/// * The type `It` satisfies [`is_copy_constructible`](is_copy_constructible)
+/// * The type `It` satisfies [`is_copy_assignable`](is_copy_constructible)
+/// * The type `It` satisfies [`is_destructible`](is_destructible)
+/// * lvalues of type `It` satisfy [`is_swappable`](is_destructible)
+/// 
+/// and given:
+/// 
+/// * `r`, an lvalue of type `It`.
+/// 
+/// The following expressions must be valid and have their specified
+/// effects:
+/// 
+/// +--------------+---------------+----------------------------------------------------------------------------+
+/// | Expression   | Return Type   | Precondition                                                               |
+/// +==============+===============+============================================================================+
+/// | `*r`         | unspecified   | `r` is *dereferenceable*                                                   |
+/// +--------------+---------------+----------------------------------------------------------------------------+
+/// | `++r`        | `It&`         | `r` is *incrementable* (the behavior of the expression ++r is defined)     |
+/// +--------------+---------------+----------------------------------------------------------------------------+
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_iterator,
+///         is_copy_constructible<_>,
+///         is_copy_assignable<_>,
+///         is_destructible<_>,
+///         is_swappable<_>
+///     )
+///     {
+///         template<class I>
+///         auto require(I&& i) -> valid<
+///             decltype(returns<typename std::iterator_traits<I>::reference>(*i))
+///             decltype(returns<typename std::add_lvalue_reference<I>::type>(++i))
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 #include <tick/requires.h>
 #include <tick/traits/bare.h>
