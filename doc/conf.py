@@ -408,7 +408,7 @@ def extract_doc(app, docname, source):
         lines = source[0].split('\n')
         md = [line[len(extract_prefix):] for line in lines if line.startswith(extract_prefix)]
         source[0] = '\n'.join(insert_header(convert_table(md), os.path.relpath(path, include_dir)))
-        print(source[0])
+        # print(source[0])
 
 # app setup hook
 def setup(app):
