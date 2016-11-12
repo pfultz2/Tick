@@ -9,13 +9,15 @@
 #define TICK_GUARD_IS_INPUT_ITERATOR_H
 
 /// is_input_iterator
-/// ===========
+/// =================
 /// 
 /// Description
 /// -----------
 /// 
-/// An iterator can be used to identify and traverse the elements of a
-/// container.
+/// An input iterator is an iterator that can read from the pointed-to element.
+/// Input iterators only guarantee validity for single pass algorithms: once an
+/// inputIterator `i` has been incremented, all copies of its previous value may
+/// be invalidated.
 /// 
 /// Requirements
 /// ------------
