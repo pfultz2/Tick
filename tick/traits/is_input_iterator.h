@@ -92,8 +92,8 @@
 ///     {
 ///         template<class I>
 ///         auto require(I&& i) -> valid<
-///             returns<typename iterator_traits<I>::value_type>(*i),
-///             returns<typename iterator_traits<I>::value_type>(*i++)
+///             decltype(returns<typename iterator_traits<I>::value_type>(*i)),
+///             decltype(returns<typename iterator_traits<I>::value_type>(*i++))
 ///         >;
 ///     };
 /// 
