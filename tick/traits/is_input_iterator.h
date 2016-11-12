@@ -8,6 +8,94 @@
 #ifndef TICK_GUARD_IS_INPUT_ITERATOR_H
 #define TICK_GUARD_IS_INPUT_ITERATOR_H
 
+/// is_input_iterator
+/// ===========
+/// 
+/// Description
+/// -----------
+/// 
+/// An iterator can be used to identify and traverse the elements of a
+/// container.
+/// 
+/// Requirements
+/// ------------
+/// 
+/// The type `It` satisfies InputIterator if
+/// 
+/// * The type `It` satisfies [`is_iterator`](is_iterator)
+/// * The type `It` satisfies [`is_equality_comparable`](is_equality_comparable)
+/// 
+/// And, given
+/// 
+/// * `i` and `j`, values of type `It` or const It
+/// * `reference`, the type denoted by `std::iterator_traits<It>::reference`
+/// * `value_type`, the type denoted by `std::iterator_traits<It>::value_type`
+/// 
+/// The following expressions must be valid and have their specified effects
+/// 
+/// +--------------------+--------------------+----------------------+----------------------+
+/// | Expression         | Return             | Equivalent           | Notes                |
+/// |                    |                    | expression           |                      |
+/// +====================+====================+======================+======================+
+/// | `i != j`           | contextually       | `!(i == j)`          | **Precondition**:    |
+/// |                    | convertible to     |                      | `(i, j)` is in the   |
+/// |                    | `bool`             |                      | domain of `==`.      |
+/// +--------------------+--------------------+----------------------+----------------------+
+/// | `*i`               | reference,         | If `i == j` and      | **Precondition**:    |
+/// |                    | convertible to     | `(i, j)` is in the   | `i` is               |
+/// |                    | `value_type`       | domain of `==` then  | dereferenceable.     |
+/// |                    |                    | this is equivalent   |                      |
+/// |                    |                    | to `*j`.             | The expression       |
+/// |                    |                    |                      | `(void)*i`, `*i` is  |
+/// |                    |                    |                      | equivalent to `*i`.  |
+/// +--------------------+--------------------+----------------------+----------------------+
+/// | `i->m`             |                    | `(*i).m`             | **Precondition**:    |
+/// |                    |                    |                      | `i` is               |
+/// |                    |                    |                      | dereferenceable.     |
+/// +--------------------+--------------------+----------------------+----------------------+
+/// | `++i`              | `It&`              |                      | **Precondition**:    |
+/// |                    |                    |                      | `i` is               |
+/// |                    |                    |                      | dereferenceable.     |
+/// |                    |                    |                      |                      |
+/// |                    |                    |                      | **Postcondition**:   |
+/// |                    |                    |                      | `i` is               |
+/// |                    |                    |                      | dereferenceable or   |
+/// |                    |                    |                      | `i` is past-the-end. |
+/// |                    |                    |                      |                      |
+/// |                    |                    |                      | **Postcondition**:   |
+/// |                    |                    |                      | Any copies of the    |
+/// |                    |                    |                      | previous value of    |
+/// |                    |                    |                      | `i` are no longer    |
+/// |                    |                    |                      | required to be       |
+/// |                    |                    |                      | either               |
+/// |                    |                    |                      | dereferenceable or   |
+/// |                    |                    |                      | to be in the         |
+/// |                    |                    |                      | domain of `==`.      |
+/// +--------------------+--------------------+----------------------+----------------------+
+/// | `(void)i++`        |                    | `(void)++i`          |                      |
+/// +--------------------+--------------------+----------------------+----------------------+
+/// | `*i++`             | convertible to     | `value_type x = *i;` |                      |
+/// |                    | `value_type`       | `++i;`               |                      |
+/// |                    |                    | `return x;`          |                      |
+/// |                    |                    |                      |                      |
+/// +--------------------+--------------------+----------------------+----------------------+
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_input_iterator, 
+///         is_iterator<_>, 
+///         is_equality_comparable<_>
+///     )
+///     {
+///         template<class I>
+///         auto require(I&& i) -> valid<
+///             returns<typename iterator_traits<I>::value_type>(*i),
+///             returns<typename iterator_traits<I>::value_type>(*i++)
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 #include <tick/traits/is_iterator.h>
 #include <tick/traits/is_equality_comparable.h>
