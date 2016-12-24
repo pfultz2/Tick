@@ -8,6 +8,15 @@
 #ifndef TICK_GUARD_IS_TRIVIAL_H
 #define TICK_GUARD_IS_TRIVIAL_H
 
+/// is_trivial
+/// ==========
+/// 
+/// Description
+/// -----------
+/// 
+/// If a type is trivial.
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {

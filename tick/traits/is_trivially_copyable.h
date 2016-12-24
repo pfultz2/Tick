@@ -8,6 +8,15 @@
 #ifndef TICK_GUARD_IS_TRIVIALLY_COPYABLE_H
 #define TICK_GUARD_IS_TRIVIALLY_COPYABLE_H
 
+/// is_trivially_copyable
+/// =====================
+/// 
+/// Description
+/// -----------
+/// 
+/// If a type is trivially copyable.
+///
+
 #include <tick/builder.h>
 
 namespace tick {

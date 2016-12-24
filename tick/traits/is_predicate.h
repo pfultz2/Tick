@@ -8,6 +8,26 @@
 #ifndef TICK_GUARD_IS_PREDICATE_H
 #define TICK_GUARD_IS_PREDICATE_H
 
+/// is_predicate
+/// ============
+/// 
+/// Description
+/// -----------
+/// 
+/// A predicate is a function object that returns a boolean.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_predicate)
+///     {
+///         template<class F, class... Ts>
+///         auto require(F&& f, Ts&&... xs) -> valid<
+///             decltype(returns<bool>(f(std::forward<Ts>(xs)...)))
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {

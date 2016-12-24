@@ -8,6 +8,16 @@
 #ifndef TICK_GUARD_IS_STANDARD_LAYOUT_H
 #define TICK_GUARD_IS_STANDARD_LAYOUT_H
 
+/// is_standard_layout
+/// ==================
+/// 
+/// Description
+/// -----------
+/// 
+/// A standard layout types are useful for communicating with code written in
+/// other programming languages.
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {

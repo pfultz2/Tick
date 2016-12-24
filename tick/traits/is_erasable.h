@@ -8,6 +8,34 @@
 #ifndef TICK_GUARD_IS_ERASABLE_H
 #define TICK_GUARD_IS_ERASABLE_H
 
+/// is_erasable
+/// ===========
+/// 
+/// Description
+/// -----------
+/// 
+/// If a type can be destroyed by an allocator.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_erasable)
+///     {
+///         template<class C, class T>
+///         auto require(const C&, const T&) -> valid<
+///             has_type<typename C::allocator_type, is_allocator<_>>,
+///             decltype(returns<typename C::allocator_type&>(C::get_allocator())),
+///             decltype(
+///                 std::allocator_traits<typename C::allocator_type>::destroy(
+///                     C::get_allocator(), 
+///                     std::declval<T*>()
+///                 )
+///             )
+///         >;
+///     };
+/// 
+
+
 #include <tick/builder.h>
 #include <tick/traits/is_allocator.h>
 #include <memory>
