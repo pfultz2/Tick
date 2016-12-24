@@ -8,6 +8,32 @@
 #ifndef TICK_GUARD_IS_ASSOCIATIVE_CONTAINER_H
 #define TICK_GUARD_IS_ASSOCIATIVE_CONTAINER_H
 
+/// is_associative_container
+/// ========================
+/// 
+/// Description
+/// -----------
+/// 
+/// An associative container is an ordered container that provides fast lookup
+/// of objects based on keys.
+/// 
+/// Synopsis
+/// --------
+/// 
+/// TICK_TRAIT(is_associative_container, is_container<_>)
+/// {
+///     template<class T>
+///     auto require(const T& x) -> valid<
+///         has_type<typename T::key_type, is_destructible<_>>,
+///         has_type<typename T::key_compare, is_compare<_, typename T::key_type>>,
+///         has_type<typename T::value_compare, is_compare<_, typename T::value_type>>,
+///         returns<typename T::key_compare>(x.key_comp()),
+///         returns<typename T::value_compare>(x.value_comp())
+///     >;
+/// };
+/// 
+
+
 #include <tick/builder.h>
 #include <tick/traits/is_container.h>
 #include <tick/traits/is_compare.h>
