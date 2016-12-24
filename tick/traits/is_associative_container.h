@@ -20,17 +20,17 @@
 /// Synopsis
 /// --------
 /// 
-/// TICK_TRAIT(is_associative_container, is_container<_>)
-/// {
-///     template<class T>
-///     auto require(const T& x) -> valid<
-///         has_type<typename T::key_type, is_destructible<_>>,
-///         has_type<typename T::key_compare, is_compare<_, typename T::key_type>>,
-///         has_type<typename T::value_compare, is_compare<_, typename T::value_type>>,
-///         returns<typename T::key_compare>(x.key_comp()),
-///         returns<typename T::value_compare>(x.value_comp())
-///     >;
-/// };
+///     TICK_TRAIT(is_associative_container, is_container<_>)
+///     {
+///         template<class T>
+///         auto require(const T& x) -> valid<
+///             has_type<typename T::key_type, is_destructible<_>>,
+///             has_type<typename T::key_compare, is_compare<_, typename T::key_type>>,
+///             has_type<typename T::value_compare, is_compare<_, typename T::value_type>>,
+///             returns<typename T::key_compare>(x.key_comp()),
+///             returns<typename T::value_compare>(x.value_comp())
+///         >;
+///     };
 /// 
 
 

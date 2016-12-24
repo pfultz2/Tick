@@ -8,6 +8,34 @@
 #ifndef TICK_GUARD_IS_COMPARE_H
 #define TICK_GUARD_IS_COMPARE_H
 
+/// is_compare
+/// ==========
+/// 
+/// Description
+/// -----------
+/// 
+/// A compare function is a function that is used to establish a relationship.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_compare)
+///     {
+///         template<class F, class T>
+///         auto require(F&& f, T&& x) -> valid<
+///             returns<bool>(f(std::forward<T>(x), std::forward<T>(x))
+///         >;
+///     
+///         template<class F, class T, class U>
+///         auto require(F&& f, T&& x, U&& y) -> valid<
+///             decltype(require(std::forward<F>(f), std::forward<T>(x))),
+///             decltype(require(std::forward<F>(f), std::forward<U>(y))),
+///             returns<bool>(f(std::forward<T>(x), std::forward<U>(y)),
+///             returns<bool>(f(std::forward<U>(y), std::forward<T>(x))
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {
