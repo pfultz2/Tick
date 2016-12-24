@@ -8,6 +8,29 @@
 #ifndef TICK_GUARD_IS_COPY_INSERTABLE_H
 #define TICK_GUARD_IS_COPY_INSERTABLE_H
 
+/// is_copy_insertable
+/// ==================
+/// 
+/// Description
+/// -----------
+/// 
+/// If a type can be copy-constructed in-place by a given allocator.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_copy_insertable,
+///         is_move_insertable<_1, _2>
+///     )
+///     {
+///         template<class C, class T>
+///         auto require(const C&, const T&) -> valid<
+///             is_true<is_emplace_constructible<C, T, T>>
+///         >;
+///     };
+/// 
+
+
 #include <tick/builder.h>
 #include <tick/traits/is_move_insertable.h>
 

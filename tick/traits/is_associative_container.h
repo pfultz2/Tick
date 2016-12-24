@@ -27,8 +27,8 @@
 ///             has_type<typename T::key_type, is_destructible<_>>,
 ///             has_type<typename T::key_compare, is_compare<_, typename T::key_type>>,
 ///             has_type<typename T::value_compare, is_compare<_, typename T::value_type>>,
-///             returns<typename T::key_compare>(x.key_comp()),
-///             returns<typename T::value_compare>(x.value_comp())
+///             decltype(returns<typename T::key_compare>(x.key_comp())),
+///             decltype(returns<typename T::value_compare>(x.value_comp()))
 ///         >;
 ///     };
 /// 

@@ -8,6 +8,25 @@
 #ifndef TICK_GUARD_IS_MOVE_INSERTABLE_H
 #define TICK_GUARD_IS_MOVE_INSERTABLE_H
 
+/// is_move_insertable
+/// ==================
+/// 
+/// Description
+/// -----------
+/// 
+/// If a type can be constructed into uninitialized storage from an rvalue of
+/// that type by a given allocator.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     template<class C, class T>
+///     struct is_move_insertable
+///     : is_emplace_constructible<C, T, T&&>
+///     {};
+/// 
+
+
 #include <tick/builder.h>
 #include <tick/traits/is_emplace_constructible.h>
 #include <memory>

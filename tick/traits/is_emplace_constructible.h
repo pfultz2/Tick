@@ -8,6 +8,36 @@
 #ifndef TICK_GUARD_IS_EMPLACE_CONSTRUCTIBLE_H
 #define TICK_GUARD_IS_EMPLACE_CONSTRUCTIBLE_H
 
+/// is_emplace_constructible
+/// ========================
+/// 
+/// Description
+/// -----------
+/// 
+/// If a type can be constructed from a given set of arguments in
+/// uninitialized storage by a given allocator.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_emplace_constructible)
+///     {
+///         template<class C, class T, class... Ts>
+///         auto require(const C& c, const T&, Ts&&...) -> valid<
+///             has_type<typename C::allocator_type, is_allocator<_>>,
+///             decltype(returns<typename C::allocator_type>(c.get_allocator())),
+///             decltype(
+///                 std::allocator_traits<typename C::allocator_type>::construct(
+///                     as_mutable(c.get_allocator()), 
+///                     std::declval<T*>(), 
+///                     std::declval<Ts>()...
+///                 )
+///             )
+///         >;
+///     };
+/// 
+
+
 #include <tick/builder.h>
 #include <tick/traits/is_allocator.h>
 #include <memory>
