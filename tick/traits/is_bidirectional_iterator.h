@@ -25,6 +25,7 @@
 ///  * The type It satisfies [`is_forward_iterator`](is_forward_iterator)
 ///  
 ///  And, given
+///  
 ///  * `a` and `b`, iterators of type `It`
 ///  * `reference`, the type denoted by `std::iterator_traits<It>::reference`
 ///  
@@ -34,11 +35,11 @@
 ///  | Expression         | Return                 | Equivalent                         |
 ///  |                    |                        | expression                         |
 ///  +====================+========================+====================================+
-///  | ``--a``            | ``It&``                |                                    |
+///  | `--a`              | `It&`                  |                                    |
 ///  +--------------------+------------------------+------------------------------------+
-///  | ``a00``            | convertible to ``It&`` | ``It temp = a; --a; return temp;`` |
+///  | `a00`              | convertible to `It&`   | `It temp = a; --a; return temp;`   |
 ///  +--------------------+------------------------+------------------------------------+
-///  | ``*a--``           | ``reference``          |                                    |
+///  | `*a--`             | `reference`            |                                    |
 ///  +--------------------+------------------------+------------------------------------+
 /// 
 /// Synopsis
