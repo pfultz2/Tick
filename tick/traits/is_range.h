@@ -8,6 +8,30 @@
 #ifndef TICK_GUARD_IS_RANGE_H
 #define TICK_GUARD_IS_RANGE_H
 
+/// is_range
+/// ========
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if the type provides begin and end iterators that can be used with
+/// a for-range loop.
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_range)
+///     {
+///         using std::begin;
+///         using std::end;
+///         template<class T>
+///         auto require(T&& x) -> valid<
+///             returns<is_iterator<_>>(begin(std::forward<T>(x))),
+///             returns<is_iterator<_>>(end(std::forward<T>(x)))
+///         >;
+///     };
+/// 
+
 #include <tick/builder.h>
 #include <tick/traits/is_iterator.h>
 
