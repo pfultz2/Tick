@@ -64,8 +64,7 @@
 /// |                    |                    | within the range        |
 /// |                    |                    | of representable        |
 /// |                    |                    | values of               |
-/// |                    |                    | `difference_type`       |
-/// |                    |                    | .                       |
+/// |                    |                    | `difference_type`.      |
 /// +--------------------+--------------------+-------------------------+
 /// | `i - n`            | `It`               |                         |
 /// |                    |                    |                         |
@@ -90,28 +89,28 @@
 /// Synopsis
 /// --------
 /// 
-///  TICK_TRAIT(is_random_access_iterator, 
-///      is_bidirectional_iterator<_>, 
-///      is_totally_ordered<_>
-///  )
-///  {
-///      template<class I, class Number>
-///      auto require(I&& i, Number n) -> valid<
-///          returns<typename std::add_lvalue_reference<I>::type>(i += n),
-///          returns<typename std::add_lvalue_reference<I>::type>(i -= n),
-///          returns<I>(i + n),
-///          returns<I>(i - n),
-///          returns<I>(n + i),
-///          returns<typename iterator_traits<I>::difference_type>(i - i),
-///          returns<typename iterator_traits<I>::reference>(i[n]),
-///          returns<typename iterator_traits<I>::reference>(*(i + n))
-///      >;
-///  
-///      template<class I>
-///      auto require(I&& i) -> valid<
-///          decltype(require(std::forward<I>(i), 0))
-///      >;
-///  };
+///     TICK_TRAIT(is_random_access_iterator, 
+///         is_bidirectional_iterator<_>, 
+///         is_totally_ordered<_>
+///     )
+///     {
+///         template<class I, class Number>
+///         auto require(I&& i, Number n) -> valid<
+///             returns<typename std::add_lvalue_reference<I>::type>(i += n),
+///             returns<typename std::add_lvalue_reference<I>::type>(i -= n),
+///             returns<I>(i + n),
+///             returns<I>(i - n),
+///             returns<I>(n + i),
+///             returns<typename iterator_traits<I>::difference_type>(i - i),
+///             returns<typename iterator_traits<I>::reference>(i[n]),
+///             returns<typename iterator_traits<I>::reference>(*(i + n))
+///         >;
+///     
+///         template<class I>
+///         auto require(I&& i) -> valid<
+///             decltype(require(std::forward<I>(i), 0))
+///         >;
+///     };
 /// 
 
 #include <tick/builder.h>
