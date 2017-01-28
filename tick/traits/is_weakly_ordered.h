@@ -8,6 +8,70 @@
 #ifndef TICK_GUARD_IS_WEAKLY_ORDERED_H
 #define TICK_GUARD_IS_WEAKLY_ORDERED_H
 
+/// is_weakly_ordered
+/// =================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if type `T` has order operators such as  `>`, `<`, `>=` and `<=`
+/// and they are convertible to `bool`.
+/// 
+/// Requirements
+/// ------------
+/// 
+/// The type `T` satisfies `is_weakly_ordered` if
+/// 
+/// Given:
+/// 
+/// * a, and b expressions of type `T` or `const T`
+/// 
+/// The following expressions must be valid:
+/// 
+/// +------------+----------------------------------+
+/// | Expression | Return type                      |
+/// +============+==================================+
+/// | `a > b`    | implicitly convertible to `bool` |
+/// +------------+----------------------------------+
+/// | `a > b`    | implicitly convertible to `bool` |
+/// +------------+----------------------------------+
+/// | `a >= b`   | implicitly convertible to `bool` |
+/// +------------+----------------------------------+
+/// | `a <= b`   | implicitly convertible to `bool` |
+/// +------------+----------------------------------+
+/// 
+/// Synopsis
+/// --------
+/// 
+/// TICK_TRAIT(is_weakly_ordered)
+/// {
+///     template<class T>
+///     auto require(T&& x) -> valid<
+///         returns<bool>(x < x),
+///         returns<bool>(x > x),
+///         returns<bool>(x <= x),
+///         returns<bool>(x >= x)
+///     >;
+/// 
+///     template<class T, class U>
+///     auto require(T&& x, U&& y) -> valid<
+///         decltype(require(std::forward<T>(x))),
+///         decltype(require(std::forward<U>(y))),
+///         returns<bool>(x < y),
+///         returns<bool>(y < x),
+/// 
+///         returns<bool>(x > y),
+///         returns<bool>(y > x),
+/// 
+///         returns<bool>(x <= y),
+///         returns<bool>(y <= x),
+/// 
+///         returns<bool>(x >= y),
+///         returns<bool>(y >= x)
+///     >;
+/// };
+/// 
+
 #include <tick/builder.h>
 
 namespace tick {

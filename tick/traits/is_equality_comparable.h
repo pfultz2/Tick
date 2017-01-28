@@ -24,7 +24,7 @@
 /// 
 /// Given:
 /// 
-/// * a, and b expressions of type T or const T
+/// * a, and b expressions of type `T` or `const T`
 /// 
 /// The following expressions must be valid:
 /// 
