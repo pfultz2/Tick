@@ -8,6 +8,33 @@
 #ifndef TICK_GUARD_IS_TOTALLY_ORDERED_H
 #define TICK_GUARD_IS_TOTALLY_ORDERED_H
 
+/// is_totally_ordered
+/// ==================
+/// 
+/// Description
+/// -----------
+/// 
+/// Checks if type `T` has operators for ordering and equality, and they are
+/// convertible to `bool`.
+/// 
+/// Requirements
+/// ------------
+/// 
+/// The type `T` satisfies `is_totally_ordered` if
+/// 
+/// * The type `T` satisfies [`is_weakly_ordered`](is_weakly_ordered)
+/// * The type `T` satisfies [`is_equality_comparable`](is_equality_comparable)
+/// 
+/// Synopsis
+/// --------
+/// 
+///     TICK_TRAIT(is_totally_ordered,
+///         quote<is_weakly_ordered>,
+///         quote<is_equality_comparable>
+///     )
+///     {};
+/// 
+
 #include <tick/builder.h>
 #include <tick/traits/is_weakly_ordered.h>
 #include <tick/traits/is_equality_comparable.h>
