@@ -8,6 +8,112 @@
 #ifndef TICK_GUARD_IS_RANDOM_ACCESS_ITERATOR_H
 #define TICK_GUARD_IS_RANDOM_ACCESS_ITERATOR_H
 
+/// is_random_access_iterator
+/// =========================
+/// 
+/// Description
+/// -----------
+/// 
+/// A random access iterator is a bidirectional iterator that can be moved to
+/// point to any element in constant time.
+/// 
+/// Requirements
+/// ------------
+/// 
+/// The type `It` satisfies `is_random_access_iterator` if
+/// 
+/// * The type `It` satisfies [`is_bidirectional_iterator`](is_bidirectional_iterator)
+/// * The type `It` satisfies [`is_totally_ordered`](is_totally_ordered)
+/// 
+/// And, given
+/// 
+/// * `value_type`, the type denoted by `std::iterator_traits<It>::value_type`
+/// * `difference_type`, the type denoted by `std::iterator_traits<It>::difference_type`
+/// * `reference`, the type denoted by `std::iterator_traits<It>::reference`
+/// * `i`, `a`, `b`, objects of type `It` or `const It`
+/// * `r`, a value of type `It&`
+/// * `n`, an integer of type `difference_type`
+/// 
+/// The following expressions must be valid and have their specified effects
+/// 
+/// +--------------------+--------------------+-------------------------+
+/// | Expression         | Return type        | Notes                   |
+/// |                    |                    |                         |
+/// +====================+====================+=========================+
+/// | `r += n`           | `It&`              | -  `n` can be           |
+/// |                    |                    |    both positive        |
+/// |                    |                    |    or negative          |
+/// |                    |                    | -  The complexity       |
+/// |                    |                    |    is constant          |
+/// |                    |                    |    (that is, the        |
+/// |                    |                    |    implementation       |
+/// |                    |                    |    cannot actually      |
+/// |                    |                    |    execute the          |
+/// |                    |                    |    while loop           |
+/// |                    |                    |    shown in             |
+/// |                    |                    |    operational          |
+/// |                    |                    |    semantics)           |
+/// +--------------------+--------------------+-------------------------+
+/// | `a + n`            | `It`               | -  `n` can be           |
+/// | `n + a`            |                    |    both positive        |
+/// |                    |                    |    or negative          |
+/// |                    |                    | -  a + n == n + a       |
+/// +--------------------+--------------------+-------------------------+
+/// | `r -= n`           | `It&`              | The absolute value      |
+/// |                    |                    | of `n` must be          |
+/// |                    |                    | within the range        |
+/// |                    |                    | of representable        |
+/// |                    |                    | values of               |
+/// |                    |                    | `difference_type`       |
+/// |                    |                    | .                       |
+/// +--------------------+--------------------+-------------------------+
+/// | `i - n`            | `It`               |                         |
+/// |                    |                    |                         |
+/// +--------------------+--------------------+-------------------------+
+/// | `b - a`            | `difference_type`  | Precondition:           |
+/// |                    |                    |                         |
+/// |                    |                    | -  there exists a       |
+/// |                    |                    |    value `n` of         |
+/// |                    |                    |    type                 |
+/// |                    |                    |    `difference_type`    |
+/// |                    |                    |    such that            |
+/// |                    |                    |    `a+n==b`             |
+/// |                    |                    |                         |
+/// |                    |                    | Postcondition:          |
+/// |                    |                    |                         |
+/// |                    |                    | -  `b == a + (b - a)`   |
+/// +--------------------+--------------------+-------------------------+
+/// | `i[n]`             | convertible to     |                         |
+/// |                    | `reference`        |                         |
+/// +--------------------+--------------------+-------------------------+
+/// 
+/// Synopsis
+/// --------
+/// 
+///  TICK_TRAIT(is_random_access_iterator, 
+///      is_bidirectional_iterator<_>, 
+///      is_totally_ordered<_>
+///  )
+///  {
+///      template<class I, class Number>
+///      auto require(I&& i, Number n) -> valid<
+///          returns<typename std::add_lvalue_reference<I>::type>(i += n),
+///          returns<typename std::add_lvalue_reference<I>::type>(i -= n),
+///          returns<I>(i + n),
+///          returns<I>(i - n),
+///          returns<I>(n + i),
+///          returns<typename iterator_traits<I>::difference_type>(i - i),
+///          returns<typename iterator_traits<I>::reference>(i[n]),
+///          returns<typename iterator_traits<I>::reference>(*(i + n))
+///      >;
+///  
+///      template<class I>
+///      auto require(I&& i) -> valid<
+///          decltype(require(std::forward<I>(i), 0))
+///      >;
+///  };
+/// 
+
 #include <tick/builder.h>
 #include <tick/traits/is_bidirectional_iterator.h>
 #include <tick/traits/is_totally_ordered.h>
