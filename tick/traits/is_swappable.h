@@ -43,14 +43,16 @@
 /// 
 ///     TICK_TRAIT(is_swappable)
 ///     {
+///         using std::swap;
 ///         template<class T>
 ///         auto require(T&& x) -> valid<
-///             ...
+///             decltype(swap(x, x))
 ///         >;
 ///     
 ///         template<class T, class U>
 ///         auto require(T&& x, U&& y) -> valid<
-///             ...
+///             decltype(swap(x, y))
+///             decltype(swap(y, x))
 ///         >;
 ///     };
 /// 
@@ -80,6 +82,7 @@ TICK_TRAIT(is_swappable)
     template<class T, class U>
     auto require(T&& x, U&& y) -> valid<
         decltype(tick_adl::swap(x, y))
+        decltype(tick_adl::swap(y, x))
     >;
 };
 

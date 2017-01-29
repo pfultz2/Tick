@@ -26,8 +26,8 @@
 ///         using std::end;
 ///         template<class T>
 ///         auto require(T&& x) -> valid<
-///             returns<is_iterator<_>>(begin(std::forward<T>(x))),
-///             returns<is_iterator<_>>(end(std::forward<T>(x)))
+///             decltype(returns<is_iterator<_>>(begin(std::forward<T>(x)))),
+///             decltype(returns<is_iterator<_>>(end(std::forward<T>(x))))
 ///         >;
 ///     };
 /// 

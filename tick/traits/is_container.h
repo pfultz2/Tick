@@ -14,7 +14,7 @@
 /// Description
 /// -----------
 /// 
-/// A Container is an object used to store other objects and takes care of the
+/// A container is an object used to store other objects and takes care of the
 /// management of the memory used by the objects it contains.
 /// 
 /// Synopsis

@@ -49,9 +49,9 @@
 ///     {
 ///         template<class I>
 ///         auto require(I&& i) -> valid<
-///             returns<typename std::add_lvalue_reference<I>::type>(--i),
-///             returns<I>(i--),
-///             returns<typename iterator_traits<I>::reference>(*i--)
+///             decltype(returns<typename std::add_lvalue_reference<I>::type>(--i)),
+///             decltype(returns<I>(i--)),
+///             decltype(returns<typename iterator_traits<I>::reference>(*i--))
 ///         >;
 ///     };
 /// 

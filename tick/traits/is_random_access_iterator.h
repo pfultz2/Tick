@@ -64,14 +64,14 @@
 ///     {
 ///         template<class I, class Number>
 ///         auto require(I&& i, Number n) -> valid<
-///             returns<typename std::add_lvalue_reference<I>::type>(i += n),
-///             returns<typename std::add_lvalue_reference<I>::type>(i -= n),
-///             returns<I>(i + n),
-///             returns<I>(i - n),
-///             returns<I>(n + i),
-///             returns<typename iterator_traits<I>::difference_type>(i - i),
-///             returns<typename iterator_traits<I>::reference>(i[n]),
-///             returns<typename iterator_traits<I>::reference>(*(i + n))
+///             decltype(returns<typename std::add_lvalue_reference<I>::type>(i += n)),
+///             decltype(returns<typename std::add_lvalue_reference<I>::type>(i -= n)),
+///             decltype(returns<I>(i + n)),
+///             decltype(returns<I>(i - n)),
+///             decltype(returns<I>(n + i)),
+///             decltype(returns<typename iterator_traits<I>::difference_type>(i - i)),
+///             decltype(returns<typename iterator_traits<I>::reference>(i[n])),
+///             decltype(returns<typename iterator_traits<I>::reference>(*(i + n)))
 ///         >;
 ///     
 ///         template<class I>

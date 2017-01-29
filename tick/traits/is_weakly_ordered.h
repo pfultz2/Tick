@@ -47,27 +47,27 @@
 ///     {
 ///         template<class T>
 ///         auto require(T&& x) -> valid<
-///             returns<bool>(x < x),
-///             returns<bool>(x > x),
-///             returns<bool>(x <= x),
-///             returns<bool>(x >= x)
+///             decltype(returns<bool>(x < x)),
+///             decltype(returns<bool>(x > x)),
+///             decltype(returns<bool>(x <= x)),
+///             decltype(returns<bool>(x >= x))
 ///         >;
 ///     
 ///         template<class T, class U>
 ///         auto require(T&& x, U&& y) -> valid<
 ///             decltype(require(std::forward<T>(x))),
 ///             decltype(require(std::forward<U>(y))),
-///             returns<bool>(x < y),
-///             returns<bool>(y < x),
+///             decltype(returns<bool>(x < y)),
+///             decltype(returns<bool>(y < x)),
 ///     
-///             returns<bool>(x > y),
-///             returns<bool>(y > x),
+///             decltype(returns<bool>(x > y)),
+///             decltype(returns<bool>(y > x)),
 ///     
-///             returns<bool>(x <= y),
-///             returns<bool>(y <= x),
+///             decltype(returns<bool>(x <= y)),
+///             decltype(returns<bool>(y <= x)),
 ///     
-///             returns<bool>(x >= y),
-///             returns<bool>(y >= x)
+///             decltype(returns<bool>(x >= y)),
+///             decltype(returns<bool>(y >= x))
 ///         >;
 ///     };
 /// 
