@@ -46,7 +46,7 @@
 // It expands to 1 if it is, otherwise it expands to 0.
 //
 #define TICK_PP_IS_PAREN(x) TICK_PP_IS_PAREN_CHECK(TICK_PP_IS_PAREN_PROBE x)
-#define TICK_PP_IS_PAREN_CHECK(...) TICK_PP_IS_PAREN_CHECK_N(__VA_ARGS__,0)
+#define TICK_PP_IS_PAREN_CHECK(...) TICK_PP_IS_PAREN_CHECK_N(__VA_ARGS__,0,0)
 #define TICK_PP_IS_PAREN_PROBE(...) ~, 1,
 #define TICK_PP_IS_PAREN_CHECK_N(x, n, ...) n
 
