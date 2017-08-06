@@ -8,10 +8,10 @@
 #ifndef TICK_GUARD_TRAIT_CHECK_H
 #define TICK_GUARD_TRAIT_CHECK_H
 
-#include <tick/builder.h>
-#include <tick/detail/fold.h>
-#include <tick/detail/pp.h>
-#include <tick/detail/set.h>
+#include "builder.h"
+#include "detail/fold.h"
+#include "detail/pp.h"
+#include "detail/set.h"
 
 namespace tick {
 

@@ -71,3 +71,22 @@ add_test_executable(set)
 add_test_executable(tag)
 add_test_executable(trait_check)
 add_test_executable(traits)
+
+####################
+# add include headers to IDE
+
+file(GLOB tick_include
+  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" 
+  "${CMAKE_CURRENT_SOURCE_DIR}/tick/*.h"
+)
+add_custom_target(tick_include SOURCES ${tick_include})
+
+file(GLOB tick_include
+  RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/tick/detail/*.h"
+)
+add_custom_target(tick_include_detail SOURCES ${tick_include})
+
+# end headers in IDE
+####################
+

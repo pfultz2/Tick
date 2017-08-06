@@ -8,10 +8,9 @@
 #ifndef TICK_GUARD_BUILDER_H
 #define TICK_GUARD_BUILDER_H
 
-#include <tick/detail/matches.h>
-#include <tick/detail/pp.h>
-#include <tick/integral_constant.h>
-
+#include "detail/matches.h"
+#include "detail/pp.h"
+#include "integral_constant.h"
 
 #if defined (__GNUC__) && !defined (__clang__)
 #    if __GNUC__ == 4 && __GNUC_MINOR__ < 7

@@ -8,8 +8,8 @@
 #ifndef TICK_GUARD_TRAITS_H
 #define TICK_GUARD_TRAITS_H
 
-#include <tick/builder.h>
-#include <tick/requires.h>
+#include "builder.h"
+#include "requires.h"
 #include <iterator>
 
 namespace tick_adl {

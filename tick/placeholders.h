@@ -8,7 +8,7 @@
 #ifndef TICK_GUARD_PLACEHOLDERS_H
 #define TICK_GUARD_PLACEHOLDERS_H
 
-#include <tick/integral_constant.h>
+#include "integral_constant.h"
 
 namespace tick {
 

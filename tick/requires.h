@@ -9,7 +9,8 @@
 #define TICK_GUARD_REQUIRES_H
 
 #include <type_traits>
-#include <tick/integral_constant.h>
+//#include <tick/integral_constant.h>
+#include "integral_constant.h"
 
 namespace tick { 
 
